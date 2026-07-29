@@ -74,8 +74,8 @@ if page == "Dashboard":
 
             chart = alt.Chart(chart_data).mark_bar().encode(
                 x="IP",
-                y="Failed Attempts",
-                color=alt.value("#ff4b4b")
+                y="Failed Attempts"
+                
             )
             st.altair_chart(chart, use_container_width=True)
 
