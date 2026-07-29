@@ -1,1 +1,2 @@
 {"ts": "2026-07-29T07:52:30.350065+00:00", "level": "INFO", "logger": "cloudshield.test", "message": "Logging works!"}
+{"ts": "2026-07-29T11:03:04.477250+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
