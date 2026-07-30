@@ -1,2 +1,4 @@
 {"ts": "2026-07-29T07:52:30.350065+00:00", "level": "INFO", "logger": "cloudshield.test", "message": "Logging works!"}
 {"ts": "2026-07-29T11:03:04.477250+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-30T08:07:25.133869+00:00", "level": "INFO", "logger": "cloudshield.decorators", "message": "detect_fixed took 10.28ms"}
+{"ts": "2026-07-30T08:08:17.517748+00:00", "level": "INFO", "logger": "cloudshield.decorators", "message": "detect_fixed took 10.20ms"}
