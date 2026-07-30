@@ -2,3 +2,7 @@
 {"ts": "2026-07-29T11:03:04.477250+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
 {"ts": "2026-07-30T08:07:25.133869+00:00", "level": "INFO", "logger": "cloudshield.decorators", "message": "detect_fixed took 10.28ms"}
 {"ts": "2026-07-30T08:08:17.517748+00:00", "level": "INFO", "logger": "cloudshield.decorators", "message": "detect_fixed took 10.20ms"}
+{"ts": "2026-07-30T10:58:23.478753+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-30T10:58:23.479483+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Auto threshold (p95): 2.9"}
+{"ts": "2026-07-30T10:58:23.479640+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 1 IPs above threshold 2.9"}
+{"ts": "2026-07-30T10:58:23.534939+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
