@@ -10,14 +10,14 @@ logger = get_logger("charts")
 def apply_theme(fig, ax, dark_mode: bool = False):
     fig.patch.set_alpha(0)
     ax.set_facecolor("none")
-    text_color = "white" if dark_mode else "gray"
-    ax.tick_params(colors=text_color, labelsize=12)
+    text_color = "#888888"
+    ax.tick_params(colors=text_color, labelsize=14)
     ax.xaxis.label.set_color(text_color)
-    ax.xaxis.label.set_size(13)
+    ax.xaxis.label.set_size(14)
     ax.yaxis.label.set_color(text_color)
-    ax.yaxis.label.set_size(13)
+    ax.yaxis.label.set_size(14)
     ax.title.set_color(text_color)
-    ax.title.set_size(14)
+    ax.title.set_size(16)
     for spine in ax.spines.values():
         spine.set_edgecolor(text_color)
     return fig, ax
