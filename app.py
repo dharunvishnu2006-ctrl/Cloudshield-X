@@ -22,7 +22,7 @@ page = st.sidebar.radio(
 
 st.sidebar.divider()
 threshold = st.sidebar.slider("Detection Threshold", min_value=1, max_value=20, value=3)
-
+dark_mode = st.sidebar.toggle("🌙 Dark Mode", value=False)
 if page == "🏠 Dashboard":
     st.subheader("📁 Upload Server Log")
     uploaded_file = st.file_uploader("Choose a .log file", type=["log", "txt"])
@@ -56,7 +56,7 @@ if page == "🏠 Dashboard":
 
         st.divider()
         st.subheader("📈 Distribution Analysis")
-        dist_fig = plot_request_distribution(grouped)
+        dist_fig = plot_request_distribution(grouped, dark_mode=dark_mode)
         if dist_fig:
             st.pyplot(dist_fig, transparent=True)
 

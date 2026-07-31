@@ -7,13 +7,16 @@ from src.logging_setup import get_logger
 logger = get_logger("charts")
 
 
-def apply_theme(fig, ax):
+def apply_theme(fig, ax, dark_mode: bool = False):
     fig.patch.set_alpha(0)
     ax.set_facecolor("none")
-    ax.tick_params(colors="grey")
-    ax.xaxis.label.set_color("gray")
-    ax.yaxis.label.set_color("gray")
-    ax.title.set_color("gray")
+    text_color = "white" if dark_mode else "gray"
+    ax.tick_params(colors=text_color)
+    ax.xaxis.label.set_color(text_color)
+    ax.yaxis.label.set_color(text_color)
+    ax.title.set_color(text_color)
+    for spine in ax.spines.values():
+        spine.set_edgecolor(text_color)
     return fig, ax
 
 
@@ -36,13 +39,15 @@ def plot_top_ips(grouped_df: pd.DataFrame, top_n: int = 10) -> plt.Figure:
     return fig
 
 
-def plot_request_distribution(grouped_df: pd.DataFrame) -> plt.Figure:
+def plot_request_distribution(
+    grouped_df: pd.DataFrame, dark_mode: bool = True
+) -> plt.Figure:
     if grouped_df.empty:
         return None
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    apply_theme(fig, axes[0])
-    apply_theme(fig, axes[1])
+    apply_theme(fig, axes[0], dark_mode)
+    apply_theme(fig, axes[1], dark_mode)
 
     axes[0].hist(grouped_df["count"], bins=20, color="steelblue", edgecolor="white")
     axes[0].set_title("Request Count Distribution")

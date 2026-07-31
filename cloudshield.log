@@ -14,3 +14,45 @@
 {"ts": "2026-07-31T07:05:37.976835+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
 {"ts": "2026-07-31T07:05:38.148183+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
 {"ts": "2026-07-31T09:36:12.314316+00:00", "level": "INFO", "logger": "cloudshield.api", "message": "GET /alerts \u2192 2 results"}
+{"ts": "2026-07-31T12:51:51.625867+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T12:51:56.932767+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T12:51:56.941691+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T12:51:56.997678+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T12:51:56.997829+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T12:51:57.180700+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T12:51:57.336602+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T13:02:54.828482+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:03:00.481502+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:03:00.487907+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T13:03:00.503146+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T13:03:00.503378+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T13:03:00.648271+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T13:03:00.785464+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T13:04:33.732010+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:04:39.177432+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:04:39.185077+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T13:04:39.201086+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T13:04:39.201375+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T13:04:39.346006+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T13:04:39.469877+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T13:05:33.824780+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:05:37.803770+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:05:37.809559+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T13:05:37.826318+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T13:05:37.826517+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T13:05:37.973415+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T13:05:38.096412+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T13:07:39.549680+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:07:43.816140+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:07:43.823085+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T13:07:43.839212+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T13:07:43.839445+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T13:07:43.986391+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T13:07:44.110818+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T13:10:35.422005+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:10:40.318872+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-07-31T13:10:40.325274+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Request stats: {'mean': 2.0, 'median': 2.0, 'p95': 2.9, 'max': 3.0, 'total_ips': 3}"}
+{"ts": "2026-07-31T13:10:40.341611+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Analysed 6 events, 3 unique IPs"}
+{"ts": "2026-07-31T13:10:40.341858+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
+{"ts": "2026-07-31T13:10:40.483439+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
+{"ts": "2026-07-31T13:10:40.606442+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
