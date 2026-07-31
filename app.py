@@ -8,7 +8,7 @@ from src.store import init_db
 setup_logging()
 init_db()
 
-st.set_page_config(page_title="CloudShield X", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="CloudShield X v1.1", page_icon="🛡️", layout="wide")
 
 st.title("🛡️ CloudShield X — Security Log Analyzer")
 st.caption("v1.1 | CSPM Platform | Built by J. Dharun Vishnu")
