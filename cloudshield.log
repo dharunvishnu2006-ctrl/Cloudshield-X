@@ -13,3 +13,4 @@
 {"ts": "2026-07-31T07:05:37.776504+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
 {"ts": "2026-07-31T07:05:37.976835+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
 {"ts": "2026-07-31T07:05:38.148183+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-07-31T09:36:12.314316+00:00", "level": "INFO", "logger": "cloudshield.api", "message": "GET /alerts \u2192 2 results"}
