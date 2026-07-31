@@ -11,8 +11,7 @@ def timed(func):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         elapsed = time.perf_counter() - start
-        logger.info(
-            f"{func.__name__} took {elapsed*1000:.2f}ms"
-        )
+        logger.info(f"{func.__name__} took {elapsed*1000:.2f}ms")
         return result
+
     return wrapper

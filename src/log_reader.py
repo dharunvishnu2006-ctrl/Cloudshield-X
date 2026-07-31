@@ -2,7 +2,7 @@ def read_logs(filepath: str) -> list:
     """Read a server log file and return a list of dicts,
     one per line: {'time','ip','request','status'}."""
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             lines = f.readlines()
 
         results = []
@@ -10,17 +10,12 @@ def read_logs(filepath: str) -> list:
             line = line.strip()
             if line == "":
                 continue
-            parts = line.split('|')
+            parts = line.split("|")
             time = parts[0].strip()
             ip = parts[1].strip()
             request = parts[2].strip()
             status = parts[3].strip()
-            log_dict = {
-                "time": time,
-                "ip": ip,
-                "request": request,
-                "status": status
-            }
+            log_dict = {"time": time, "ip": ip, "request": request, "status": status}
             results.append(log_dict)
         return results
 

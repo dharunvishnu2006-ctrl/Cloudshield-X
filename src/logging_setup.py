@@ -3,6 +3,7 @@ import json
 import sys
 from datetime import datetime, timezone
 
+
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         log_data = {
@@ -12,6 +13,7 @@ class JsonFormatter(logging.Formatter):
             "message": record.getMessage(),
         }
         return json.dumps(log_data)
+
 
 def setup_logging(run_id: str = "") -> logging.Logger:
     logger = logging.getLogger("cloudshield")
@@ -30,10 +32,12 @@ def setup_logging(run_id: str = "") -> logging.Logger:
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    return logger 
+    return logger
+
 
 def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(f"cloudshield.{name}")
 
+
 def generate_run_id() -> str:
-    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")   
+    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")

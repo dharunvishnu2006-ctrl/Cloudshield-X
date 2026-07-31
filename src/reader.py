@@ -1,12 +1,14 @@
 import gzip
 from pathlib import Path
+from typing import Generator
 from src.models import LogEvent
 from src.parser import parse_line
-from src.logging_setup import get_logger, generate_run_id
+from src.logging_setup import get_logger
 
 logger = get_logger("reader")
 
-def read_events(path: str, run_id: str = "") -> LogEvent:
+
+def read_events(path: str, run_id: str = "") -> Generator[LogEvent, None, None]:
     file_path = Path(path)
 
     if not file_path.exists():
@@ -14,8 +16,7 @@ def read_events(path: str, run_id: str = "") -> LogEvent:
         return
 
     opener = gzip.open if file_path.suffix == ".gz" else open
-
-    with opener(file_path, "rt", encoding="utf-8") as f:
+    with opener(file_path, "rt", encoding="utf-8") as f:  # type: ignore[operator]
         for line in f:
             parsed = parse_line(line, run_id=run_id)
             if parsed is None:
@@ -24,20 +25,25 @@ def read_events(path: str, run_id: str = "") -> LogEvent:
                 yield LogEvent(
                     ip=str(parsed.get("ip", "")),
                     timestamp=parsed.get("timestamp", ""),
-                    method=parsed.get("request", "").split()[0]
-                        if parsed.get("request") else "",
-                    path=parsed.get("request", "").split()[1]
-                        if parsed.get("request") else "",
+                    method=(
+                        parsed.get("request", "").split()[0]
+                        if parsed.get("request")
+                        else ""
+                    ),
+                    path=(
+                        parsed.get("request", "").split()[1]
+                        if parsed.get("request")
+                        else ""
+                    ),
                     status=int(parsed.get("status", 0)),
-                    user_agent=parsed.get("user_agent", "")
+                    user_agent=parsed.get("user_agent", ""),
                 )
             except Exception as e:
-                logger.error(f"Event build failed: {e} "
-                             f"run_id={run_id}")
+                logger.error(f"Event build failed: {e} run_id={run_id}")
                 continue
 
-def scan_directory(directory: str,
-                   run_id: str = "") -> LogEvent:
+
+def scan_directory(directory: str, run_id: str = "") -> Generator[LogEvent, None, None]:
     log_dir = Path(directory)
     if not log_dir.exists():
         logger.error(f"Directory not found: {directory}")
@@ -47,8 +53,7 @@ def scan_directory(directory: str,
     log_files = list(log_dir.glob(pattern))
     log_files += list(log_dir.glob("**/*.gz"))
 
-    logger.info(f"Found {len(log_files)} log files "
-                f"run_id={run_id}")
+    logger.info(f"Found {len(log_files)} log files run_id={run_id}")
 
     for log_file in log_files:
-        yield from read_events(str(log_file), run_id)            
+        yield from read_events(str(log_file), run_id)

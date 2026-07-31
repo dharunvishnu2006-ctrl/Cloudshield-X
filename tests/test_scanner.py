@@ -1,8 +1,6 @@
 import os
-import pytest
 from src.log_reader import read_logs
 from src.ip_detector import detect_suspicious_ips
-from src.alert_system import raise_alerts
 from src.report_generator import generate_report
 
 
@@ -13,10 +11,12 @@ def test_read_logs_returns_list():
     assert isinstance(result[0], dict)
     assert len(result[0]) == 4
 
+
 def test_repeated_failures_flagged():
     logs = read_logs("data/sample_server.log")
     suspicious = detect_suspicious_ips(logs)
     assert "203.0.113.45" in suspicious
+
 
 def test_clean_ip_not_flagged():
     logs = read_logs("data/sample_server.log")
@@ -33,4 +33,4 @@ def test_report_file_created():
 
 def test_missing_file_handled():
     result = read_logs("data/this_file_does_not_exist.log")
-    assert result ==[]
+    assert result == []

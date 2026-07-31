@@ -23,9 +23,7 @@ def io_workload_threaded() -> float:
     start = time.perf_counter()
     threads = []
     for _ in range(NUM_FILES):
-        t = threading.Thread(
-            target=lambda: list(read_events(LOG_FILE))
-        )
+        t = threading.Thread(target=lambda: list(read_events(LOG_FILE)))
         threads.append(t)
         t.start()
     for t in threads:

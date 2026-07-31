@@ -1,5 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime
+from pydantic import BaseModel, field_validator
+from typing import Literal
+from pydantic.networks import IPvAnyAddress
+
 
 @dataclass
 class LogEvent:
@@ -10,6 +13,7 @@ class LogEvent:
     status: int
     user_agent: str
 
+
 @dataclass
 class Alert:
     ip: str
@@ -18,9 +22,6 @@ class Alert:
     severity: str
     at: str
 
-from pydantic import BaseModel, field_validator
-from typing import Literal 
-from pydantic.networks import IPvAnyAddress    
 
 class LogEventModel(BaseModel):
     ip: IPvAnyAddress
@@ -37,9 +38,10 @@ class LogEventModel(BaseModel):
             raise ValueError(f"Invalid status code: {v}")
         return v
 
+
 class AlertModel(BaseModel):
     ip: IPvAnyAddress
     reason: str
     count: int
     severity: Literal["low", "medium", "high", "critical"]
-    at: str    
+    at: str

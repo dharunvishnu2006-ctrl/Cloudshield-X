@@ -1,23 +1,14 @@
 import streamlit as st
-import pandas as pd
 from src.logging_setup import setup_logging, generate_run_id
 from src.reader import read_events
-from src.analytics import (compute_request_stats,
-                            flag_suspicious_numpy,
-                            analyse_events)
-from src.charts import (plot_top_ips,
-                        plot_request_distribution,
-                        plot_interactive_top_ips)
-from src.store import init_db, save_scan, save_alert
+from src.analytics import compute_request_stats, flag_suspicious_numpy, analyse_events
+from src.charts import plot_request_distribution, plot_interactive_top_ips
+from src.store import init_db
 
 setup_logging()
 init_db()
 
-st.set_page_config(
-    page_title="CloudShield X",
-    page_icon="🛡️",
-    layout="wide"
-)
+st.set_page_config(page_title="CloudShield X", page_icon="🛡️", layout="wide")
 
 st.title("🛡️ CloudShield X — Security Log Analyzer")
 st.caption("v1.1 | CSPM Platform | Built by J. Dharun Vishnu")
@@ -26,23 +17,15 @@ st.sidebar.title("🛡️ CloudShield X")
 st.sidebar.caption("CSPM Platform - v1.1")
 
 page = st.sidebar.radio(
-    "Navigate",
-    ["🏠 Dashboard", "📊 Analytics", "📄 Reports", "ℹ️ About"]
+    "Navigate", ["🏠 Dashboard", "📊 Analytics", "📄 Reports", "ℹ️ About"]
 )
 
 st.sidebar.divider()
-threshold = st.sidebar.slider(
-    "Detection Threshold",
-    min_value=1,
-    max_value=20,
-    value=3
-)
+threshold = st.sidebar.slider("Detection Threshold", min_value=1, max_value=20, value=3)
 
 if page == "🏠 Dashboard":
     st.subheader("📁 Upload Server Log")
-    uploaded_file = st.file_uploader(
-        "Choose a .log file", type=["log", "txt"]
-    )
+    uploaded_file = st.file_uploader("Choose a .log file", type=["log", "txt"])
 
     if uploaded_file is not None:
         run_id = generate_run_id()
@@ -55,9 +38,7 @@ if page == "🏠 Dashboard":
             events = list(read_events(temp_path, run_id))
             stats = compute_request_stats(events)
             grouped = analyse_events(events)
-            suspicious = flag_suspicious_numpy(
-                events, threshold=threshold
-            )
+            suspicious = flag_suspicious_numpy(events, threshold=threshold)
 
         st.divider()
         st.subheader("📊 Live Stats")
@@ -65,15 +46,13 @@ if page == "🏠 Dashboard":
         col1.metric("Total Events", len(events))
         col2.metric("Unique IPs", len(grouped))
         col3.metric("Suspicious IPs", len(suspicious))
-        col4.metric("p95 Threshold",
-                    f"{stats.get('p95', 0):.1f}")
+        col4.metric("p95 Threshold", f"{stats.get('p95', 0):.1f}")
 
         st.divider()
         st.subheader("🔍 Top Offending IPs")
         plotly_fig = plot_interactive_top_ips(grouped)
         if plotly_fig:
-            st.plotly_chart(plotly_fig,
-                           use_container_width=True)
+            st.plotly_chart(plotly_fig, use_container_width=True)
 
         st.divider()
         st.subheader("📈 Distribution Analysis")
@@ -84,40 +63,42 @@ if page == "🏠 Dashboard":
         if suspicious:
             st.divider()
             st.subheader("🚨 Suspicious IPs Detected")
-            st.error(f"⚠️ {len(suspicious)} suspicious "
-                     f"IPs found!")
+            st.error(f"⚠️ {len(suspicious)} suspicious " f"IPs found!")
             for ip in suspicious:
                 st.write(f"🔴 `{ip}`")
-        
- 
+
         elif page == "ℹ️ About":
             st.subheader("ℹ️ About CloudShield X")
-            st.write("""
+            st.write(
+                """
             **CloudShield X** is an open-source Cloud Security
             Posture Management (CSPM) platform, built from
             scratch in Python — every line typed by hand.
-             
             **v1.1** closes the audit: 80 of 80 roadmap steps
             built, three real defects fixed.
-            """)
-             
+            """
+            )
+
             st.markdown("### 🐛 Bugs Fixed in v1.1")
-            st.markdown("""
+            st.markdown(
+                """
             - **Parser bug** — `split()` broke on quoted fields;
               regex with named groups fixed it
             - **No persistence** — restart lost all detections;
               SQLite now survives restarts
             - **print() logging** — replaced with structured
             JSON logging + run_id tracing
-            """)
-             
+            """
+            )
+
             st.markdown("### 🔧 Tech Stack")
-            st.markdown("`Python` `Pydantic` `NumPy` `Pandas` "
-                        "`Matplotlib` `Seaborn` `Plotly` "
-                        "`SQLite` `Streamlit` `pytest`")
-             
+            st.markdown(
+                "`Python` `Pydantic` `NumPy` `Pandas` "
+                "`Matplotlib` `Seaborn` `Plotly` "
+                "`SQLite` `Streamlit` `pytest`"
+            )
+
             st.markdown("### 🔗 Links")
             st.markdown(
-                "[GitHub](https://github.com/dharunvishnu2006"
-                "-ctrl/Cloudshield-X)"
+                "[GitHub](https://github.com/dharunvishnu2006" "-ctrl/Cloudshield-X)"
             )
