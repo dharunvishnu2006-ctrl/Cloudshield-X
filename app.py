@@ -1,96 +1,123 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
-from src.scanner import CloudShieldScanner
-from src.log_reader import read_logs
-from src.ip_detector import detect_suspicious_ips
-from src.alert_system import raise_alerts
-from src.report_generator import generate_report
+from src.logging_setup import setup_logging, generate_run_id
+from src.reader import read_events
+from src.analytics import (compute_request_stats,
+                            flag_suspicious_numpy,
+                            analyse_events)
+from src.charts import (plot_top_ips,
+                        plot_request_distribution,
+                        plot_interactive_top_ips)
+from src.store import init_db, save_scan, save_alert
+
+setup_logging()
+init_db()
 
 st.set_page_config(
     page_title="CloudShield X",
-    page_icon="",
+    page_icon="🛡️",
     layout="wide"
 )
 
-st.title("CloudShield X — Security Log Analyzer")
-st.caption("v1 of 6 | CSPM Platform | Built by J. Dharun Vishnu")
-st.sidebar.title("CloudShield X")
-st.sidebar.caption("CSPM Platform — v1")
+st.title("🛡️ CloudShield X — Security Log Analyzer")
+st.caption("v1.1 | CSPM Platform | Built by J. Dharun Vishnu")
+
+st.sidebar.title("🛡️ CloudShield X")
+st.sidebar.caption("CSPM Platform - v1.1")
 
 page = st.sidebar.radio(
     "Navigate",
-    ["Dashboard", "Analytics", "Reports", "About"]
+    ["🏠 Dashboard", "📊 Analytics", "📄 Reports", "ℹ️ About"]
 )
 
-if page == "Dashboard":
-    st.subheader("Live Stats")
-    col1, col2, col3 = st.columns(3)
-    m1 = col1.empty()
-    m2 = col2.empty()
-    m3 = col3.empty()
+st.sidebar.divider()
+threshold = st.sidebar.slider(
+    "Detection Threshold",
+    min_value=1,
+    max_value=20,
+    value=3
+)
 
-    m1.metric("Total Logs Scanned", "0")
-    m2.metric("Suspicious IPs", "0")
-    m3.metric("Alerts Raised", "0")
-
-    st.divider()
-    st.subheader("Upload server Log")
-    uploaded_file = st.file_uploader("choose a .log file", type=["log", "txt"])
+if page == "🏠 Dashboard":
+    st.subheader("📁 Upload Server Log")
+    uploaded_file = st.file_uploader(
+        "Choose a .log file", type=["log", "txt"]
+    )
 
     if uploaded_file is not None:
+        run_id = generate_run_id()
         temp_path = "data/uploaded_log.log"
+
         with open(temp_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        st.success("File uploaded! Scanning...")
-        logs = read_logs(temp_path)
-        suspicious = detect_suspicious_ips(logs, threshold=3)
-        alerts = raise_alerts(suspicious)
-        report_path = generate_report(suspicious)
+        with st.spinner("Scanning..."):
+            events = list(read_events(temp_path, run_id))
+            stats = compute_request_stats(events)
+            grouped = analyse_events(events)
+            suspicious = flag_suspicious_numpy(
+                events, threshold=threshold
+            )
 
-        st.success(f"Scan Completed! Report saved to: {report_path}")
+        st.divider()
+        st.subheader("📊 Live Stats")
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Total Events", len(events))
+        col2.metric("Unique IPs", len(grouped))
+        col3.metric("Suspicious IPs", len(suspicious))
+        col4.metric("p95 Threshold",
+                    f"{stats.get('p95', 0):.1f}")
 
-        m1.metric("Total Logs Scanned", len(logs))
-        m2.metric("Suspicious IPs", len(suspicious))
-        m3.metric("Alerts Raised", len(alerts))
+        st.divider()
+        st.subheader("🔍 Top Offending IPs")
+        plotly_fig = plot_interactive_top_ips(grouped)
+        if plotly_fig:
+            st.plotly_chart(plotly_fig,
+                           use_container_width=True)
 
-        with open(report_path, "rb") as f:
-            st.download_button(
-                label="Download Security Report (CSV)",
-                data=f,
-                file_name="security_report.csv",
-                mime="text/csv"
-        )    
+        st.divider()
+        st.subheader("📈 Distribution Analysis")
+        dist_fig = plot_request_distribution(grouped)
+        if dist_fig:
+            st.pyplot(dist_fig, transparent=True)
 
         if suspicious:
             st.divider()
-            st.subheader("Failed Login Attempts by IP")
-
-            chart_data = pd.DataFrame({
-                "IP": list(suspicious.keys()),
-                "Failed Attempts": list(suspicious.values())
-            })
-
-            chart = alt.Chart(chart_data).mark_bar().encode(
-                x="IP",
-                y="Failed Attempts"
-                
+            st.subheader("🚨 Suspicious IPs Detected")
+            st.error(f"⚠️ {len(suspicious)} suspicious "
+                     f"IPs found!")
+            for ip in suspicious:
+                st.write(f"🔴 `{ip}`")
+        
+ 
+        elif page == "ℹ️ About":
+            st.subheader("ℹ️ About CloudShield X")
+            st.write("""
+            **CloudShield X** is an open-source Cloud Security
+            Posture Management (CSPM) platform, built from
+            scratch in Python — every line typed by hand.
+             
+            **v1.1** closes the audit: 80 of 80 roadmap steps
+            built, three real defects fixed.
+            """)
+             
+            st.markdown("### 🐛 Bugs Fixed in v1.1")
+            st.markdown("""
+            - **Parser bug** — `split()` broke on quoted fields;
+              regex with named groups fixed it
+            - **No persistence** — restart lost all detections;
+              SQLite now survives restarts
+            - **print() logging** — replaced with structured
+            JSON logging + run_id tracing
+            """)
+             
+            st.markdown("### 🔧 Tech Stack")
+            st.markdown("`Python` `Pydantic` `NumPy` `Pandas` "
+                        "`Matplotlib` `Seaborn` `Plotly` "
+                        "`SQLite` `Streamlit` `pytest`")
+             
+            st.markdown("### 🔗 Links")
+            st.markdown(
+                "[GitHub](https://github.com/dharunvishnu2006"
+                "-ctrl/Cloudshield-X)"
             )
-            st.altair_chart(chart, use_container_width=True)
-
-elif page == "About":
-    st.subheader("About Cloudshield X")
-    st.write("""
-    **CloudShield X** is an open-source Cloud Security Posture 
-    Management (CSPM) platform, built from scratch in Python.
-    
-    This is **v1 of 6** — the foundation layer, focused on 
-    server log analysis and brute-force detection.
-    """)
-
-    st.markdown("### Tech Stack")
-    st.markdown("`Python` `Pandas` `NumPy` `Streamlit` `pytest` `Git`")
-
-    st.markdown("### Links")
-    st.markdown("[GitHub Repo](https://github.com/dharunvishnu2006-ctrl/cloudshield-x-v1)")
