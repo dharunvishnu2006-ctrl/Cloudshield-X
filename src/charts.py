@@ -10,6 +10,10 @@ logger = get_logger("charts")
 def apply_theme(fig, ax):
     fig.patch.set_alpha(0)
     ax.set_facecolor("none")
+    ax.tick_params(colors="grey")
+    ax.xaxis.label.set_color("gray")
+    ax.yaxis.label.set_color("gray")
+    ax.title.set_color("gray")
     return fig, ax
 
 
