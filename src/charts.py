@@ -11,10 +11,13 @@ def apply_theme(fig, ax, dark_mode: bool = False):
     fig.patch.set_alpha(0)
     ax.set_facecolor("none")
     text_color = "white" if dark_mode else "gray"
-    ax.tick_params(colors=text_color)
+    ax.tick_params(colors=text_color, labelsize=12)
     ax.xaxis.label.set_color(text_color)
+    ax.xaxis.label.set_size(13)
     ax.yaxis.label.set_color(text_color)
+    ax.yaxis.label.set_size(13)
     ax.title.set_color(text_color)
+    ax.title.set_size(14)
     for spine in ax.spines.values():
         spine.set_edgecolor(text_color)
     return fig, ax
@@ -26,7 +29,7 @@ def plot_top_ips(grouped_df: pd.DataFrame, top_n: int = 10) -> plt.Figure:
 
     top = grouped_df.head(top_n)
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(14, 6))
     apply_theme(fig, ax)
 
     ax.barh(top["ip"], top["count"], color="steelblue")
@@ -40,12 +43,12 @@ def plot_top_ips(grouped_df: pd.DataFrame, top_n: int = 10) -> plt.Figure:
 
 
 def plot_request_distribution(
-    grouped_df: pd.DataFrame, dark_mode: bool = True
+    grouped_df: pd.DataFrame, dark_mode: bool = False
 ) -> plt.Figure:
     if grouped_df.empty:
         return None
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
     apply_theme(fig, axes[0], dark_mode)
     apply_theme(fig, axes[1], dark_mode)
 
@@ -57,6 +60,12 @@ def plot_request_distribution(
     sns.boxplot(y=grouped_df["count"], ax=axes[1], color="steelblue")
     axes[1].set_title("Box Plot — Requests per IP")
     axes[1].set_ylabel("Request Count")
+
+    for ax in axes:
+        ax.tick_params(labelsize=9)
+        ax.xaxis.label.set_size(9)
+        ax.yaxis.label.set_size(9)
+        ax.title.set_size(12)
 
     plt.tight_layout()
     logger.info("Distribution chart plotted")
@@ -75,7 +84,7 @@ def plot_interactive_top_ips(grouped_df: pd.DataFrame, top_n: int = 10):
         y="ip",
         orientation="h",
         color="count",
-        color_continuous_scale="Blues",
+        color_continuous_scale="Viridis",
         title=f"Top {top_n} IPs — Interactive",
         labels={"count": "Requests", "ip": "IP Address"},
     )
@@ -84,6 +93,14 @@ def plot_interactive_top_ips(grouped_df: pd.DataFrame, top_n: int = 10):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         yaxis={"autorange": "reversed"},
+        font=dict(size=16, color="gray"),
+        title_font=dict(size=20, color="gray"),
+        xaxis=dict(
+            title_font=dict(size=13, color="gray"),
+            tickfont=dict(size=15, color="gray"),
+        ),
+        yaxis_title="IP Address",
+        yaxis_title_font=dict(size=13, color="gray"),
     )
 
     logger.info(f"Plotly chart: top {top_n} IPs")
