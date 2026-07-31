@@ -1,71 +1,103 @@
-# 🛡️ CloudShield X v1 — Server Log Security Analyzer
+# 🛡️ CloudShield X — Server Log Security Analyzer
 
-> The foundation of an enterprise-grade CSPM (Cloud Security Posture Management) platform — built from scratch in Python.
+> Enterprise-grade CSPM platform built from scratch in Python.
+> v1.0 shipped in 3 days. v1.1 closed the audit: 80/80 steps built,
+> 3 real bugs fixed.
 
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-green)
+![Python](https://img.shields.io/badge/Python-3.14-blue)
+![Pandas](https://img.shields.io/badge/Pandas-Analytics-green)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
-![pytest](https://img.shields.io/badge/pytest-Tested-yellow)
+![pytest](https://img.shields.io/badge/pytest-21%20tests-yellow)
+![bandit](https://img.shields.io/badge/bandit-clean-brightgreen)
 
 ## 🚀 Live Demo
 **[Try it live →](https://cloudshield-x-v1-4rdy68whxptnf6whzzrdrd.streamlit.app)**
 
-## 📖 About
+## 📖 The Honest Story
 
-CloudShield X is an open-source CSPM platform that grows across 6 versions, each adding a new skill. **v1** is the foundation — a Python tool that reads server logs, detects brute-force attacks, raises alerts, and exports a security report.
+v1.0 shipped in 3 days — 5 features, 5 tests, deployed.
+But its range was 80 roadmap steps and it used 25.
 
-Every fintech, e-commerce, and cloud platform generates millions of log lines daily — hidden in them are attackers probing for weaknesses. This tool catches them.
+I audited my own work, found that, and closed it in v1.1.
+The audit also found 3 real bugs:
 
-## ✨ Features
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | `split()` broke on quoted fields | Compiled regex with named groups |
+| 2 | Memory-only — restart lost everything | SQLite persistence |
+| 3 | `print()` instead of logging | Structured JSON logging + run_id |
 
-- **Log File Reader** — parses raw server logs (File I/O)
-- **Suspicious IP Detector** — flags brute-force patterns via threshold-based counting
-- **Alert System** — raises clear, testable warnings
-- **CSV Report Generator** — exports professional security summaries (Pandas)
-- **Interactive Dashboard** — live Streamlit web app with charts and downloads
+## ✨ Features — v1.1 (80/80 steps)
+
+**Foundation (v1.0):**
+- Log File Reader — File I/O, error handling
+- Suspicious IP Detector — threshold-based counting
+- Alert System — testable, typed alerts
+- CSV Report Generator — Pandas DataFrame
+- Streamlit Dashboard — upload, scan, download
+
+**Completion (v1.1):**
+- Pydantic validation — bad data rejected at parse boundary
+- Regex parser — handles real Apache/nginx logs
+- SQLite database — history survives restart
+- OOP detector hierarchy — polymorphic, extensible
+- NumPy/Pandas analytics — p95 data-driven threshold
+- Plotly + Seaborn charts — interactive dashboard
+- Threat intel feeds — external reputation API
+- Flask alert API — `GET /alerts`, `GET /health`
+- Pre-commit hooks — black, flake8, mypy, bandit clean
+- LLM summaries — verified, never fabricated
+
+## 📊 Results (measured, not guessed)
+
+- Parser: split() vs regex — disagreed on real log lines
+- Tests: 5 (v1.0) → 21 (v1.1)
+- Steps: 25 (v1.0) → 80/80 (v1.1)
+- Security: 0 bandit findings
 
 ## 🏗️ Architecture
-
-Log File → Reader → IP Detector → Alert System → CSV Report
-then connects down to → Streamlit Dashboard
+Log File → Reader (generator) → Parser (regex) → Validator (Pydantic)
+↓
+Detectors (polymorphic)
+↓
+SQLite Store → Flask API
+↓
+Streamlit Dashboard
 
 ## 🔧 Tech Stack
 
-Python 3.11 · Pandas · NumPy · Streamlit · pytest · Git
+Python 3.14 · Pydantic · NumPy · Pandas · Matplotlib · Seaborn ·
+Plotly · SQLite · Flask · Streamlit · pytest · black · flake8 ·
+mypy · bandit · pre-commit
 
-## 💻 How to Run Locally
+## 💻 How to Run
 
-git clone https://github.com/dharunvishnu2006-ctrl/cloudshield-x-v1.git
-cd cloudshield-x-v1
+```bash
+git clone https://github.com/dharunvishnu2006-ctrl/Cloudshield-X.git
+cd Cloudshield-X
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 streamlit run app.py
+```
 
-## 🧪 Testing
+## 🧪 Tests
 
-5 pytest tests cover data parsing, detection accuracy, report generation, and error handling:
-
-python -m pytest -v
-
-## 📚 What I Learned
-
-- File I/O and error handling (try/except)
-- Dictionary-based counting patterns for threat detection
-- Building and testing with Pandas DataFrames
-- Object-Oriented Programming (classes, `__init__`, `self`)
-- Writing testable code with pytest
-- Deploying Python apps to the cloud with Streamlit
+```bash
+python -m pytest tests/ -v
+# 21 tests — all passing
+```
 
 ## 🗺️ Roadmap
 
-This is **v1 of 6**. Each future version adds a new layer of mastery toward a full enterprise CSPM platform:
-- v2: Advanced Python & APIs
-- v3: Cloud provider integrations (AWS/Azure)
-- v4: Database & authentication
-- v5: Real-time monitoring
-- v6: Full enterprise dashboard
+- **v1.1** — Layer 1 complete: 80/80 steps ← YOU ARE HERE
+- **v2** — Data Structures & SQL (steps 81–153)
+- **v3** — Mathematics & ML foundations (154–240)
+- **v4** — ML, deep learning, API & Docker (241–373)
+- **v5** — GenAI, RAG, agents (374–500)
+- **v6** — MLOps (501–600)
 
 ## 👤 Author
 
-J. Dharun Vishnu — Future AI/ML + Cyber Security Engineer 🎯
+**J. Dharun Vishnu**
+[GitHub](https://github.com/dharunvishnu2006-ctrl)
