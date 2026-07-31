@@ -1,0 +1,49 @@
+{
+  "versions": [
+    {
+      "version": "v1.0",
+      "tag": "v1.0",
+      "date": "2026-06-15",
+      "description": "Foundation — 3-day sprint",
+      "features": [
+        "Log File Reader (File I/O)",
+        "Suspicious IP Detector (dict counting)",
+        "Alert System (testable messages)",
+        "CSV Report Generator (Pandas)",
+        "Streamlit Dashboard (upload + scan)"
+      ],
+      "tests": 5,
+      "steps_covered": 25
+    },
+    {
+      "version": "v1.1",
+      "tag": "v1.1",
+      "date": "2026-07-31",
+      "description": "Completion — all 80 steps built",
+      "features": [
+        "E1: Typed Records + Pydantic validation",
+        "E2: Structured JSON logging + Regex parser",
+        "E3: SQLite threat database",
+        "E4: Python craft (lambda, recursion, comprehensions)",
+        "E5: OOP detector hierarchy (polymorphism)",
+        "E6: Decorators + context managers",
+        "E7: Streaming large logs (generators)",
+        "E8: Concurrency benchmark",
+        "E9: NumPy + Pandas analytics",
+        "E10: Real dashboard (Plotly, Seaborn)",
+        "E11: Threat intelligence feeds",
+        "E12: Flask alert API",
+        "E13: Engineering discipline (pre-commit)",
+        "E14: LLM-assisted summaries",
+        "E15: Layer 1 consolidation + docs"
+      ],
+      "bugs_fixed": [
+        "Parser: split() broke on quoted fields — regex fixed",
+        "Persistence: memory-only — SQLite added",
+        "Logging: print() — structured JSON logging added"
+      ],
+      "tests": 21,
+      "steps_covered": 80
+    }
+  ]
+}
