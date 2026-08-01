@@ -42,9 +42,9 @@ def render_evolution():
                 )
             else:
                 st.markdown(
-                    f"<div style='border:2px dashed {v['colour']};"
+                    f"<div style='border:3px dashed {v['colour']};"
                     f"padding:8px;border-radius:6px;"
-                    f"text-align:center;opacity:0.5;'>"
+                    f"text-align:center;color:{v['colour']};'>"
                     f"<b>{v['version']}</b><br/>"
                     f"{v['steps']}</div>",
                     unsafe_allow_html=True,
