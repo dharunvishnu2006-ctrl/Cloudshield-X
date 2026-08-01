@@ -9,7 +9,7 @@ from src.analytics import (
 )
 from src.charts import plot_request_distribution, plot_interactive_top_ips
 from src.store import init_db
-from src.versions import load_versions
+from src.versions import load_versions, feature_lines, bug_lines
 
 
 def render_evolution():
@@ -49,6 +49,24 @@ def render_evolution():
                     f"{v['steps']}</div>",
                     unsafe_allow_html=True,
                 )
+    st.divider()
+    st.caption(
+        "🟦 v1 + v1.1 shipped · 🟩 v2 · 🟧 v3 · 🩷 v4 · 🟪 v5 · 🟢 v6 · dashed = planned"
+    )
+
+    st.divider()
+    st.subheader("🔍 Version Detail")
+
+    for v in shipped:
+        n_feat = len(v["features"])
+        n_bugs = len(v["bugs_fixed"])
+        header = f"{v['version']} — {n_feat} features, {n_bugs} bugs fixed"
+        with st.expander(header):
+            st.markdown("**Features:**")
+            st.markdown("\n".join(feature_lines(v)))
+            if v["bugs_fixed"]:
+                st.markdown("**Bugs Fixed:**")
+                st.markdown("\n".join(bug_lines(v)))
 
     st.divider()
     st.subheader("📋 What Changed")
