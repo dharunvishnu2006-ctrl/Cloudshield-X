@@ -1,9 +1,96 @@
 import streamlit as st
+import pandas as pd
 from src.logging_setup import setup_logging, generate_run_id
 from src.reader import read_events
-from src.analytics import compute_request_stats, flag_suspicious_numpy, analyse_events
+from src.analytics import (
+    compute_request_stats,
+    flag_suspicious_numpy,
+    analyse_events,
+)
 from src.charts import plot_request_distribution, plot_interactive_top_ips
 from src.store import init_db
+from src.versions import load_versions
+
+
+def render_evolution():
+    st.title("🗺️ How CloudShield X Grew")
+    st.caption("Every number on this page comes from versions.json")
+
+    try:
+        versions = load_versions()
+    except FileNotFoundError as e:
+        st.error(f"versions.json missing: {e}")
+        return
+
+    shipped = [v for v in versions if v["status"] == "shipped"]
+
+    st.divider()
+    st.subheader("📅 Version Timeline")
+
+    cols = st.columns(len(versions))
+    for i, v in enumerate(versions):
+        is_shipped = v["status"] == "shipped"
+        with cols[i]:
+            if is_shipped:
+                st.markdown(
+                    f"<div style='background-color:{v['colour']};"
+                    f"padding:8px;border-radius:6px;"
+                    f"text-align:center;color:white;'>"
+                    f"<b>{v['version']}</b><br/>"
+                    f"{v['completion']}%</div>",
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f"<div style='border:2px dashed {v['colour']};"
+                    f"padding:8px;border-radius:6px;"
+                    f"text-align:center;opacity:0.5;'>"
+                    f"<b>{v['version']}</b><br/>"
+                    f"{v['steps']}</div>",
+                    unsafe_allow_html=True,
+                )
+
+    st.divider()
+    st.subheader("📋 What Changed")
+
+    table_data = []
+    for v in shipped:
+        table_data.append(
+            {
+                "Version": v["version"],
+                "Steps": v["steps_covered"],
+                "Features": len(v["features"]),
+                "Tests": v["tests"],
+                "Bugs Fixed": v["bugs_fixed"],
+            }
+        )
+
+    df = pd.DataFrame(table_data)
+    st.dataframe(df, use_container_width=True)
+
+    st.divider()
+    st.subheader("📝 Decisions (ADRs)")
+    st.markdown(
+        "- [ADR 001 — Regex over split()]"
+        "(docs/adr/001-regex-parser-over-split.md)\n"
+        "- [ADR 002 — SQLite over memory]"
+        "(docs/adr/002-sqlite-over-memory.md)\n"
+        "- [ADR 003 — Radio page now, multipage at v2]"
+        "(docs/adr/003-radio-page-now-multipage-at-v2.md)\n"
+    )
+
+    st.divider()
+    st.subheader("⚠️ Known Limits")
+    st.markdown(
+        """
+    - One log format only — new server needs new regex
+    - Detection threshold-based — no ML until v4
+    - SQLite single-writer — v2 moves to PostgreSQL
+    - No graph of related addresses — v2's attack graph
+    - Dashboard reads whole table — no pagination yet
+    """
+    )
+
 
 setup_logging()
 init_db()
@@ -17,7 +104,8 @@ st.sidebar.title("🛡️ CloudShield X")
 st.sidebar.caption("CSPM Platform - v1.1")
 
 page = st.sidebar.radio(
-    "Navigate", ["🏠 Dashboard", "📊 Analytics", "📄 Reports", "ℹ️ About"]
+    "Navigate",
+    ["🏠 Dashboard", "📊 Analytics", "📄 Reports", "🗺️ Evolution", "ℹ️ About"],
 )
 
 st.sidebar.divider()
@@ -56,52 +144,51 @@ if page == "🏠 Dashboard":
 
         st.divider()
         st.subheader("📈 Distribution Analysis")
-        theme = st.get_option("theme.base")
-        dark_mode = theme == "dark"
-
-        dist_fig = plot_request_distribution(grouped, dark_mode=dark_mode)
+        dist_fig = plot_request_distribution(grouped)
         if dist_fig:
             st.pyplot(dist_fig, transparent=True)
 
         if suspicious:
             st.divider()
             st.subheader("🚨 Suspicious IPs Detected")
-            st.error(f"⚠️ {len(suspicious)} suspicious " f"IPs found!")
+            st.error(f"⚠️ {len(suspicious)} suspicious IPs found!")
             for ip in suspicious:
                 st.write(f"🔴 `{ip}`")
 
-        elif page == "ℹ️ About":
-            st.subheader("ℹ️ About CloudShield X")
-            st.write(
-                """
-            **CloudShield X** is an open-source Cloud Security
-            Posture Management (CSPM) platform, built from
-            scratch in Python — every line typed by hand.
-            **v1.1** closes the audit: 80 of 80 roadmap steps
-            built, three real defects fixed.
-            """
-            )
+elif page == "🗺️ Evolution":
+    render_evolution()
 
-            st.markdown("### 🐛 Bugs Fixed in v1.1")
-            st.markdown(
-                """
-            - **Parser bug** — `split()` broke on quoted fields;
-              regex with named groups fixed it
-            - **No persistence** — restart lost all detections;
-              SQLite now survives restarts
-            - **print() logging** — replaced with structured
-            JSON logging + run_id tracing
-            """
-            )
+elif page == "ℹ️ About":
+    st.subheader("ℹ️ About CloudShield X")
+    st.write(
+        """
+        **CloudShield X** is an open-source Cloud Security
+        Posture Management (CSPM) platform, built from
+        scratch in Python — every line typed by hand.
 
-            st.markdown("### 🔧 Tech Stack")
-            st.markdown(
-                "`Python` `Pydantic` `NumPy` `Pandas` "
-                "`Matplotlib` `Seaborn` `Plotly` "
-                "`SQLite` `Streamlit` `pytest`"
-            )
+        **v1.1** closes the audit: 80 of 80 roadmap steps
+        built, three real defects fixed.
+        """
+    )
 
-            st.markdown("### 🔗 Links")
-            st.markdown(
-                "[GitHub](https://github.com/dharunvishnu2006" "-ctrl/Cloudshield-X)"
-            )
+    st.markdown("### 🐛 Bugs Fixed in v1.1")
+    st.markdown(
+        """
+        - **Parser bug** — `split()` broke on quoted fields;
+          regex with named groups fixed it
+        - **No persistence** — restart lost all detections;
+          SQLite now survives restarts
+        - **print() logging** — replaced with structured
+          JSON logging + run_id tracing
+        """
+    )
+
+    st.markdown("### 🔧 Tech Stack")
+    st.markdown(
+        "`Python` `Pydantic` `NumPy` `Pandas` "
+        "`Matplotlib` `Seaborn` `Plotly` "
+        "`SQLite` `Streamlit` `pytest`"
+    )
+
+    st.markdown("### 🔗 Links")
+    st.markdown("[GitHub](https://github.com/dharunvishnu2006-ctrl/Cloudshield-X)")
