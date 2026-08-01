@@ -90,12 +90,19 @@ python -m pytest tests/ -v
 
 ## 🗺️ Roadmap
 
-- **v1.1** — Layer 1 complete: 80/80 steps ← YOU ARE HERE
-- **v2** — Data Structures & SQL (steps 81–153)
-- **v3** — Mathematics & ML foundations (154–240)
-- **v4** — ML, deep learning, API & Docker (241–373)
-- **v5** — GenAI, RAG, agents (374–500)
-- **v6** — MLOps (501–600)
+<!-- VERSIONS_TABLE_START -->
+| Version | Status | Steps | Tests | Description |
+|---------|--------|-------|-------|-------------|
+| **v1.0** | ✅ Shipped | 1-80 | 5 | Foundation — 3-day sprint |
+| **v1.1** | ✅ Shipped | 1-80 | 25 | Completion — all 80 steps built |
+| **v2** | 🔜 Planned | 81-153 | — | Threat Intelligence — DSA + SQL |
+| **v3** | 🔜 Planned | 154-240 | — | Statistics Engine — Maths + ML start |
+| **v4** | 🔜 Planned | 241-373 | — | ML, FastAPI, Docker |
+| **v5** | 🔜 Planned | 374-500 | — | Deep Learning, GenAI Agents |
+| **v6** | 🔜 Planned | 501-600 | — | MLOps, Kubernetes, Monitoring |
+<!-- VERSIONS_TABLE_END -->
+
+[View Architecture](docs/architecture.png) · [View Evolution Map](docs/evolution.png) · [Decision Records](docs/adr/)
 
 ## 👤 Author
 
