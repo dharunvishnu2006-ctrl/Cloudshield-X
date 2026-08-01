@@ -2,48 +2,114 @@
   "versions": [
     {
       "version": "v1.0",
-      "tag": "v1.0",
-      "date": "2026-06-15",
+      "status": "shipped",
+      "colour": "#5aa9ff",
+      "steps": "1-80",
+      "completion": 10,
       "description": "Foundation — 3-day sprint",
       "features": [
-        "Log File Reader (File I/O)",
-        "Suspicious IP Detector (dict counting)",
-        "Alert System (testable messages)",
-        "CSV Report Generator (Pandas)",
-        "Streamlit Dashboard (upload + scan)"
+        "Log File Reader",
+        "Suspicious IP Detector",
+        "Alert System",
+        "CSV Report Generator",
+        "Streamlit Dashboard"
       ],
       "tests": 5,
-      "steps_covered": 25
+      "steps_covered": 25,
+      "bugs_fixed": 0
     },
     {
       "version": "v1.1",
-      "tag": "v1.1",
-      "date": "2026-07-31",
+      "status": "shipped",
+      "colour": "#5aa9ff",
+      "steps": "1-80",
+      "completion": 10,
       "description": "Completion — all 80 steps built",
       "features": [
-        "E1: Typed Records + Pydantic validation",
-        "E2: Structured JSON logging + Regex parser",
-        "E3: SQLite threat database",
-        "E4: Python craft (lambda, recursion, comprehensions)",
-        "E5: OOP detector hierarchy (polymorphism)",
-        "E6: Decorators + context managers",
-        "E7: Streaming large logs (generators)",
-        "E8: Concurrency benchmark",
-        "E9: NumPy + Pandas analytics",
-        "E10: Real dashboard (Plotly, Seaborn)",
-        "E11: Threat intelligence feeds",
-        "E12: Flask alert API",
-        "E13: Engineering discipline (pre-commit)",
-        "E14: LLM-assisted summaries",
-        "E15: Layer 1 consolidation + docs"
+        "E1: Typed Records + Pydantic",
+        "E2: Structured Logging + Regex Parser",
+        "E3: SQLite Threat Database",
+        "E4: Python Craft",
+        "E5: OOP Detector Hierarchy",
+        "E6: Decorators + Context Managers",
+        "E7: Streaming Large Logs",
+        "E8: Concurrency Benchmark",
+        "E9: NumPy + Pandas Analytics",
+        "E10: Real Dashboard",
+        "E11: Threat Intelligence Feeds",
+        "E12: Flask Alert API",
+        "E13: Engineering Discipline",
+        "E14: LLM-Assisted Summaries",
+        "E15: Layer 1 Consolidation",
+        "E16: versions.json single source of truth",
+        "E17: Evolution Page",
+        "E18: Architecture + Evolution diagrams",
+        "E19: ADR 001-003",
+        "E20: README table generated"
       ],
-      "bugs_fixed": [
-        "Parser: split() broke on quoted fields — regex fixed",
-        "Persistence: memory-only — SQLite added",
-        "Logging: print() — structured JSON logging added"
-      ],
-      "tests": 21,
-      "steps_covered": 80
+      "tests": 25,
+      "steps_covered": 80,
+      "bugs_fixed": 3
+    },
+    {
+      "version": "v2",
+      "status": "planned",
+      "colour": "#10b981",
+      "steps": "81-153",
+      "completion": 25,
+      "description": "Threat Intelligence — DSA + SQL",
+      "features": [],
+      "tests": 0,
+      "steps_covered": 0,
+      "bugs_fixed": 0
+    },
+    {
+      "version": "v3",
+      "status": "planned",
+      "colour": "#f59e0b",
+      "steps": "154-240",
+      "completion": 40,
+      "description": "Statistics Engine — Maths + ML start",
+      "features": [],
+      "tests": 0,
+      "steps_covered": 0,
+      "bugs_fixed": 0
+    },
+    {
+      "version": "v4",
+      "status": "planned",
+      "colour": "#ec4899",
+      "steps": "241-373",
+      "completion": 62,
+      "description": "ML, FastAPI, Docker",
+      "features": [],
+      "tests": 0,
+      "steps_covered": 0,
+      "bugs_fixed": 0
+    },
+    {
+      "version": "v5",
+      "status": "planned",
+      "colour": "#a78bfa",
+      "steps": "374-500",
+      "completion": 83,
+      "description": "Deep Learning, GenAI Agents",
+      "features": [],
+      "tests": 0,
+      "steps_covered": 0,
+      "bugs_fixed": 0
+    },
+    {
+      "version": "v6",
+      "status": "planned",
+      "colour": "#a3e635",
+      "steps": "501-600",
+      "completion": 100,
+      "description": "MLOps, Kubernetes, Monitoring",
+      "features": [],
+      "tests": 0,
+      "steps_covered": 0,
+      "bugs_fixed": 0
     }
   ]
 }
