@@ -16,7 +16,7 @@
       ],
       "tests": 5,
       "steps_covered": 25,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     },
     {
       "version": "v1.1",
@@ -47,9 +47,13 @@
         "E19: ADR 001-003",
         "E20: README table generated"
       ],
-      "tests": 25,
+      "tests": 11,
       "steps_covered": 80,
-      "bugs_fixed": 3
+      "bugs_fixed":  [
+  "Parser split() broke on quoted fields — regex with named groups fixed it (ADR 001)",
+  "No persistence across restarts — SQLite added (ADR 002)",
+  "print() used instead of logging — structured JSON logging added"
+]
     },
     {
       "version": "v2",
@@ -61,7 +65,7 @@
       "features": [],
       "tests": 0,
       "steps_covered": 0,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     },
     {
       "version": "v3",
@@ -73,7 +77,7 @@
       "features": [],
       "tests": 0,
       "steps_covered": 0,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     },
     {
       "version": "v4",
@@ -85,7 +89,7 @@
       "features": [],
       "tests": 0,
       "steps_covered": 0,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     },
     {
       "version": "v5",
@@ -97,7 +101,7 @@
       "features": [],
       "tests": 0,
       "steps_covered": 0,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     },
     {
       "version": "v6",
@@ -109,7 +113,7 @@
       "features": [],
       "tests": 0,
       "steps_covered": 0,
-      "bugs_fixed": 0
+      "bugs_fixed": []
     }
   ]
 }

@@ -106,6 +106,8 @@ def render_evolution():
     - SQLite single-writer — v2 moves to PostgreSQL
     - No graph of related addresses — v2's attack graph
     - Dashboard reads whole table — no pagination yet
+    - Test coverage — core modules (scanner, versions) tested;
+      E1-E15 feature-level tests are a catch-up item for the next session
     """
     )
 

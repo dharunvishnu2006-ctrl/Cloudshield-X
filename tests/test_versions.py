@@ -1,5 +1,6 @@
 import pytest
 from src.versions import load_versions
+from src.versions import feature_lines, bug_lines
 
 
 def test_versions_json_parses():
@@ -29,3 +30,16 @@ def test_missinf_file_raises_error(tmp_path):
     fake_path = tmp_path / "missing.json"
     with pytest.raises(FileNotFoundError):
         load_versions(fake_path)
+
+
+def test_feature_lines_include_all_features():
+    v = {"features": ["A", "B", "C"]}
+    lines = feature_lines(v)
+    assert all(name in "\n".join(lines) for name in v["features"])
+
+
+def test_bug_lines_are_sentences_not_counts():
+    v = {"bugs_fixed": ["Fixed X", "Fixed Y"]}
+    lines = bug_lines(v)
+    assert len(lines) == 2
+    assert "Fixed X" in lines[0]
