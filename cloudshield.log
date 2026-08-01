@@ -225,3 +225,13 @@
 {"ts": "2026-07-31T15:30:13.217444+00:00", "level": "INFO", "logger": "cloudshield.analytics", "message": "Flagged 0 IPs above threshold 3"}
 {"ts": "2026-07-31T15:30:13.374111+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Plotly chart: top 10 IPs"}
 {"ts": "2026-07-31T15:30:13.499696+00:00", "level": "INFO", "logger": "cloudshield.charts", "message": "Distribution chart plotted"}
+{"ts": "2026-08-01T10:19:23.128334+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:25.526126+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:28.779687+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:29.844846+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:30.596983+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:32.219524+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:19:32.965073+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:22:36.782587+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:22:38.413264+00:00", "level": "INFO", "logger": "cloudshield.store", "message": "Database initialized"}
+{"ts": "2026-08-01T10:22:38.417290+00:00", "level": "INFO", "logger": "cloudshield.versions", "message": "Loaded 7 versions"}
