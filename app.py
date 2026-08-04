@@ -9,7 +9,7 @@ from src.analytics import (
 )
 from src.charts import plot_request_distribution, plot_interactive_top_ips
 from src.store import init_db
-from src.versions import load_versions, feature_lines, bug_lines
+from src.versions import load_versions, feature_lines, bug_lines, total_roadmap_steps
 
 
 def render_evolution():
@@ -26,6 +26,8 @@ def render_evolution():
 
     st.divider()
     st.subheader("📅 Version Timeline")
+    total_steps = total_roadmap_steps(versions)
+    st.caption(f"Total roadmap: {total_steps} steps across {len(versions)} versions")
 
     cols = st.columns(len(versions))
     for i, v in enumerate(versions):

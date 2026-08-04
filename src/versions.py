@@ -38,3 +38,9 @@ def feature_lines(v: dict) -> list[str]:
 def bug_lines(v: dict) -> list[str]:
     """Return each fixed bug as a display-ready bullet line."""
     return [f"- {b}" for b in v["bugs_fixed"]]
+
+
+def total_roadmap_steps(versions: list[dict]) -> int:
+    """Return the highest step number across all version ranges."""
+    ends = [int(v["steps"].split("-")[1]) for v in versions]
+    return max(ends)
