@@ -25,8 +25,8 @@ def render_evolution():
 
     st.divider()
     st.subheader("📅 Version Timeline")
-    total_steps = total_roadmap_steps(versions)
-    st.caption(f"Total roadmap: {total_steps} steps across {len(versions)} versions")
+    grand_total = total_roadmap_steps(versions)
+    st.caption(f"Total roadmap: {grand_total} steps across {len(versions)} versions")
 
     cols = st.columns(len(versions))
     for i, v in enumerate(versions):
@@ -38,7 +38,9 @@ def render_evolution():
                     f"padding:8px;border-radius:6px;"
                     f"text-align:center;color:white;'>"
                     f"<b>{v['version']}</b><br/>"
-                    f"{v['completion']}%</div>",
+                    f"{v['completion']}%<br/>"
+                    f"<span style='font-size:0.75em'>"
+                    f"{v['steps_covered']}/{grand_total} steps</span></div>",
                     unsafe_allow_html=True,
                 )
             else:
