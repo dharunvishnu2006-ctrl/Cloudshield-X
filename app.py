@@ -76,13 +76,14 @@ def render_evolution():
 
     st.divider()
     st.subheader("📝 Decisions (ADRs)")
+    repo_url = "https://github.com/dharunvishnu2006-ctrl/Cloudshield-X/blob/main"
     st.markdown(
-        "- [ADR 001 — Regex over split()]"
-        "(docs/adr/001-regex-parser-over-split.md)\n"
-        "- [ADR 002 — SQLite over memory]"
-        "(docs/adr/002-sqlite-over-memory.md)\n"
-        "- [ADR 003 — Radio page now, multipage at v2]"
-        "(docs/adr/003-radio-page-now-multipage-at-v2.md)\n"
+        f"- [ADR 001 — Regex over split()]"
+        f"({repo_url}/docs/adr/001-regex-parser-over-split.md)\n"
+        f"- [ADR 002 — SQLite over memory]"
+        f"({repo_url}/docs/adr/002-sqlite-over-memory.md)\n"
+        f"- [ADR 003 — Radio page now, multipage at v2]"
+        f"({repo_url}/docs/adr/003-radio-page-now-multipage-at-v2.md)\n"
     )
 
     st.divider()
