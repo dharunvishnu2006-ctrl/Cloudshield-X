@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from src.logging_setup import setup_logging, generate_run_id
 from src.reader import read_events
 from src.analytics import (
@@ -62,31 +61,16 @@ def render_evolution():
     for v in shipped:
         n_feat = len(v["features"])
         n_bugs = len(v["bugs_fixed"])
-        header = f"{v['version']} — {n_feat} features, {n_bugs} bugs fixed"
+        header = (
+            f"{v['version']} — {v['steps_covered']} steps, "
+            f"{n_feat} features, {v['tests']} tests, {n_bugs} bugs fixed"
+        )
         with st.expander(header):
             st.markdown("**Features:**")
             st.markdown("\n".join(feature_lines(v)))
             if v["bugs_fixed"]:
                 st.markdown("**Bugs Fixed:**")
                 st.markdown("\n".join(bug_lines(v)))
-
-    st.divider()
-    st.subheader("📋 What Changed")
-
-    table_data = []
-    for v in shipped:
-        table_data.append(
-            {
-                "Version": v["version"],
-                "Steps": v["steps_covered"],
-                "Features": len(v["features"]),
-                "Tests": v["tests"],
-                "Bugs Fixed": v["bugs_fixed"],
-            }
-        )
-
-    df = pd.DataFrame(table_data)
-    st.dataframe(df, use_container_width=True)
 
     st.divider()
     st.subheader("📝 Decisions (ADRs)")
