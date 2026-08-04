@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from src.store import get_connection
 from src.logging_setup import get_logger, setup_logging
@@ -72,4 +73,5 @@ def health_check():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    debug_mode = os.environ.get("FLASK_DEBUG", "False") == "True"
+    app.run(debug=debug_mode, port=5000)

@@ -58,7 +58,7 @@ def _fetch_reputation(ip: str) -> str:
 
         url = "https://api.abuseipdb.com/api/v2/check"
         headers = {"Key": api_key, "Accept": "application/json"}
-        params = {"ipAddress": ip, "maxAgeInDays": 90}
+        params: dict[str, str | int] = {"ipAddress": ip, "maxAgeInDays": 90}
 
         response = requests.get(url, headers=headers, params=params, timeout=TIMEOUT)
 

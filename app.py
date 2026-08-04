@@ -97,6 +97,8 @@ def render_evolution():
     - Dashboard reads whole table — no pagination yet
     - Test coverage — core modules (scanner, versions) tested;
       E1-E15 feature-level tests are a catch-up item for the next session
+    - mypy debt — charts.py (empty-data return type) and summarise.py
+      (response block type narrowing) have known type errors; not fixed yet
     """
     )
 
