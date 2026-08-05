@@ -82,3 +82,39 @@ def days_since_last_seen(ip: str) -> float | None:
         return row["days_ago"]
     finally:
         conn.close()
+
+
+def full_profile(limit: int = 20) -> list[dict]:
+    """Return event + IP + actor joined into one row per event."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT e.id, e.event_time, ip.ip, a.name AS actor, e.severity_score
+            FROM security_events e
+            INNER JOIN ip_addresses ip ON ip.id = e.source_ip
+            INNER JOIN threat_actors a ON a.id = e.actor_id
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
+def never_attacked_ips() -> list[str]:
+    """Return IPs that exist in our records but have zero events."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT ip.ip
+            FROM ip_addresses ip
+            LEFT JOIN security_events e ON ip.id = e.source_ip
+            WHERE e.id IS NULL
+            """
+        ).fetchall()
+        return [row["ip"] for row in rows]
+    finally:
+        conn.close()
