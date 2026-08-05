@@ -2,6 +2,7 @@ import sqlite3
 import pytest
 from src.db import get_conn, init_db, insert_events, upsert_ip
 from src.reports import top_attackers, readable_events, never_attacked_ips
+from src.analytics_v2 import escalation_detector
 
 
 def test_schema_and_fk():
@@ -90,3 +91,45 @@ def test_inner_join_excludes_never_attacked():
     )
     quiet_ips = never_attacked_ips()
     assert "192.168.1.1" not in quiet_ips
+
+
+def test_lag_detects_escalation():
+    init_db()
+    insert_events(
+        [
+            {
+                "ip": "99.99.99.1",
+                "event_time": "2026-08-05T20:00",
+                "severity_score": 2.2,
+            },
+            {
+                "ip": "99.99.99.1",
+                "event_time": "2026-08-05T20:05",
+                "severity_score": 5.5,
+            },
+            {
+                "ip": "99.99.99.1",
+                "event_time": "2026-08-05T20:10",
+                "severity_score": 8.8,
+            },
+            {
+                "ip": "99.99.99.2",
+                "event_time": "2026-08-05T21:00",
+                "severity_score": 4.4,
+            },
+            {
+                "ip": "99.99.99.2",
+                "event_time": "2026-08-05T21:05",
+                "severity_score": 4.4,
+            },
+        ]
+    )
+    rows = escalation_detector(limit=1000)
+
+    rising_row = next(r for r in rows if r["severity_score"] == 8.8)
+    assert rising_row["prev_severity"] == 5.5
+
+    flat_row = next(
+        r for r in rows if r["severity_score"] == 4.4 and r["prev_severity"] == 4.4
+    )
+    assert flat_row["prev_severity"] == flat_row["severity_score"]
