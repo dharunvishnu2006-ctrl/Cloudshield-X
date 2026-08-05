@@ -65,3 +65,31 @@ def initial_attack_vector(limit: int = 100) -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def daily_trend_with_running_total() -> list[dict]:
+    """Show daily event counts, a running total, and a 7-day moving average."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT
+                day, events,
+                SUM(events) OVER (ORDER BY day) AS running_total,
+                AVG(events) OVER (
+                    ORDER BY day
+                    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+                ) AS moving_avg_7d
+            FROM (
+                SELECT
+                    STRFTIME('%Y-%m-%d', event_time) AS day,
+                    COUNT(*) AS events
+                FROM security_events
+                GROUP BY day
+            )
+            ORDER BY day
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
