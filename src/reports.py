@@ -118,3 +118,26 @@ def never_attacked_ips() -> list[str]:
         return [row["ip"] for row in rows]
     finally:
         conn.close()
+
+
+def reconcile_feeds() -> list[dict]:
+    """Emulate FULL OUTER JOIN: show IPs unique to either the blocklist
+    or the observed-events side, since SQLite has no FULL OUTER JOIN."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT ip.ip AS ip, ip.is_blocklisted, e.id AS event_id
+            FROM ip_addresses ip
+            LEFT JOIN security_events e ON ip.id = e.source_ip
+
+            UNION
+
+            SELECT ip.ip AS ip, ip.is_blocklisted, e.id AS event_id
+            FROM security_events e
+            LEFT JOIN ip_addresses ip ON ip.id = e.source_ip
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
