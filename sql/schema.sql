@@ -24,3 +24,8 @@ CREATE TABLE IF NOT EXISTS security_events (
 );
 
 CREATE INDEX IF NOT EXISTS idx_events_ip_time ON security_events(source_ip, event_time);
+
+CREATE TABLE IF NOT EXISTS host_links (
+    src_host TEXT NOT NULL,
+    dst_host TEXT NOT NULL
+);

@@ -187,3 +187,31 @@ def above_average_blocklisted_threats() -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def propagation_trace(start_host: str, max_hops: int = 6) -> list[dict]:
+    """Trace every host reachable from start_host, with the shortest hop count."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            WITH RECURSIVE reached(host, depth) AS (
+                SELECT ?, 0
+
+                UNION
+
+                SELECT l.dst_host, r.depth + 1
+                FROM host_links l
+                JOIN reached r ON l.src_host = r.host
+                WHERE r.depth < ?
+            )
+            SELECT host, MIN(depth) AS hops
+            FROM reached
+            GROUP BY host
+            ORDER BY hops
+            """,
+            (start_host, max_hops),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
