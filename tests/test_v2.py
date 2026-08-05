@@ -1,7 +1,7 @@
 import sqlite3
 import pytest
-from src.db import get_conn, init_db, insert_events
-from src.reports import top_attackers, readable_events
+from src.db import get_conn, init_db, insert_events, upsert_ip
+from src.reports import top_attackers, readable_events, never_attacked_ips
 
 
 def test_schema_and_fk():
@@ -43,13 +43,14 @@ def test_top_attackers():
     init_db()
     insert_events(
         [
-            {"ip": "9.9.9.9", "event_time": f"2026-08-05T10:{i:02d}", "status": 403}
+            {"ip": "77.77.77.77", "event_time": f"2026-08-05T10:{i:02d}", "status": 403}
             for i in range(10)
         ]
     )
     results = top_attackers(min_hits=5, limit=10)
-    assert results[0]["ip"] == "9.9.9.9"
-    assert results[0]["hits"] == 10
+    matching = [r for r in results if r["ip"] == "77.77.77.77"]
+    assert len(matching) == 1
+    assert matching[0]["hits"] == 10
 
 
 def test_severity_label_critical():
@@ -67,3 +68,25 @@ def test_severity_label_critical():
     rows = readable_events(limit=50)
     matching = [r for r in rows if r["ip"] == "8.8.8.8"]
     assert matching[0]["severity_label"] == "CRITICAL"
+
+
+def test_left_join_finds_quiet_ips():
+    init_db()
+    upsert_ip("172.16.0.1", "2026-08-05")
+    quiet_ips = never_attacked_ips()
+    assert "172.16.0.1" in quiet_ips
+
+
+def test_inner_join_excludes_never_attacked():
+    init_db()
+    insert_events(
+        [
+            {
+                "ip": "192.168.1.1",
+                "event_time": "2026-08-05T14:00",
+                "status": 200,
+            }
+        ]
+    )
+    quiet_ips = never_attacked_ips()
+    assert "192.168.1.1" not in quiet_ips
