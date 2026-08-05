@@ -11,3 +11,14 @@ def get_conn() -> sqlite3.Connection:
     conn.execute("PRAGMA foreign_keys = ON")
     conn.row_factory = sqlite3.Row
     return conn
+
+
+def init_db() -> None:
+    """Create all tables and the index, safe to run more than once."""
+    schema_sql = SCHEMA_PATH.read_text()
+    conn = get_conn()
+    try:
+        conn.executescript(schema_sql)
+        conn.commit()
+    finally:
+        conn.close()
