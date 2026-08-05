@@ -21,3 +21,29 @@ def top_attackers(min_hits: int = 5, limit: int = 10) -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def readable_events(limit: int = 20) -> list[dict]:
+    """Return events with cleaned IPs, actor names, and severity labels."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT
+                UPPER(TRIM(ip.ip)) AS ip,
+                COALESCE(a.name, 'Unknown') AS actor,
+                CASE
+                    WHEN e.severity_score > 8 THEN 'CRITICAL'
+                    WHEN e.severity_score > 5 THEN 'HIGH'
+                    ELSE 'LOW'
+                END AS severity_label
+            FROM security_events e
+            JOIN ip_addresses ip ON ip.id = e.source_ip
+            LEFT JOIN threat_actors a ON a.id = e.actor_id
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
