@@ -37,3 +37,34 @@ def upsert_ip(ip: str, first_seen: str = "") -> int:
         return row["id"]
     finally:
         conn.close()
+
+
+def insert_events(rows: list[dict]) -> int:
+    """Insert many events at once. Each row needs an 'ip' key.
+    Returns the number of events inserted."""
+    conn = get_conn()
+    try:
+        prepared = []
+        for row in rows:
+            ip_id = upsert_ip(row["ip"], row.get("event_time", ""))
+            prepared.append(
+                (
+                    row["event_time"],
+                    ip_id,
+                    row.get("event_type"),
+                    row.get("request"),
+                    row.get("status"),
+                    row.get("severity_score"),
+                )
+            )
+
+        conn.executemany(
+            "INSERT INTO security_events "
+            "(event_time, source_ip, event_type, request, status, severity_score) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            prepared,
+        )
+        conn.commit()
+        return len(prepared)
+    finally:
+        conn.close()
