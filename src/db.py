@@ -22,3 +22,18 @@ def init_db() -> None:
         conn.commit()
     finally:
         conn.close()
+
+
+def upsert_ip(ip: str, first_seen: str = "") -> int:
+    """Insert a new IP or return the id of the existing one."""
+    conn = get_conn()
+    try:
+        conn.execute(
+            "INSERT OR IGNORE INTO ip_addresses (ip, first_seen) VALUES (?, ?)",
+            (ip, first_seen),
+        )
+        conn.commit()
+        row = conn.execute("SELECT id FROM ip_addresses WHERE ip = ?", (ip,)).fetchone()
+        return row["id"]
+    finally:
+        conn.close()
