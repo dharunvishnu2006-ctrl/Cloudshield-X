@@ -43,3 +43,25 @@ def escalation_detector(limit: int = 100) -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def initial_attack_vector(limit: int = 100) -> list[dict]:
+    """Show each event alongside the FIRST event_type this IP ever tried."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT
+                source_ip, event_time, event_type,
+                FIRST_VALUE(event_type) OVER (
+                    PARTITION BY source_ip
+                    ORDER BY event_time
+                ) AS first_ever_vector
+            FROM security_events
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
