@@ -165,3 +165,25 @@ def repeat_endpoint_hits(within_minutes: int = 5) -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def above_average_blocklisted_threats() -> list[dict]:
+    """Return events with above-average severity, from blocklisted IPs."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT id, event_time, source_ip, severity_score
+            FROM security_events
+            WHERE severity_score > (
+                SELECT AVG(severity_score) FROM security_events
+            )
+            AND EXISTS (
+                SELECT 1 FROM ip_addresses
+                WHERE id = source_ip AND is_blocklisted = 1
+            )
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
