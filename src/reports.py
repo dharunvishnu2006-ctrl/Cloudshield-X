@@ -47,3 +47,38 @@ def readable_events(limit: int = 20) -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def monthly_trend() -> list[dict]:
+    """Return event counts grouped by month."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT STRFTIME('%Y-%m', event_time) AS month, COUNT(*) AS events
+            FROM security_events
+            GROUP BY month
+            ORDER BY month
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
+def days_since_last_seen(ip: str) -> float | None:
+    """Return how many days ago this IP was last seen, or None if never seen."""
+    conn = get_conn()
+    try:
+        row = conn.execute(
+            """
+            SELECT JULIANDAY('now') - JULIANDAY(MAX(e.event_time)) AS days_ago
+            FROM security_events e
+            JOIN ip_addresses ip ON ip.id = e.source_ip
+            WHERE ip.ip = ?
+            """,
+            (ip,),
+        ).fetchone()
+        return row["days_ago"]
+    finally:
+        conn.close()
