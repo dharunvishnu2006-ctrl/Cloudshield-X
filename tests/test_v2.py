@@ -1,7 +1,12 @@
 import sqlite3
 import pytest
 from src.db import get_conn, init_db, insert_events, upsert_ip
-from src.reports import top_attackers, readable_events, never_attacked_ips
+from src.reports import (
+    top_attackers,
+    readable_events,
+    never_attacked_ips,
+    propagation_trace,
+)
 from src.analytics_v2 import escalation_detector
 
 
@@ -133,3 +138,23 @@ def test_lag_detects_escalation():
         r for r in rows if r["severity_score"] == 4.4 and r["prev_severity"] == 4.4
     )
     assert flat_row["prev_severity"] == flat_row["severity_score"]
+
+
+def test_recursive_cte_terminates():
+    conn = get_conn()
+    conn.executemany(
+        "INSERT INTO host_links (src_host, dst_host) VALUES (?, ?)",
+        [
+            ("test-A", "test-B"),
+            ("test-B", "test-C"),
+            ("test-C", "test-A"),
+        ],
+    )
+    conn.commit()
+    conn.close()
+
+    results = propagation_trace("test-A", max_hops=6)
+    hosts_found = {r["host"] for r in results}
+
+    assert hosts_found == {"test-A", "test-B", "test-C"}
+    assert len(results) == 3
