@@ -141,3 +141,27 @@ def reconcile_feeds() -> list[dict]:
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
+
+def repeat_endpoint_hits(within_minutes: int = 5) -> list[dict]:
+    """Find the same IP hitting two different events within a short window."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT
+                e1.id AS event1, e2.id AS event2,
+                ip.ip, e1.event_time AS time1, e2.event_time AS time2
+            FROM security_events e1
+            JOIN security_events e2
+                ON e1.source_ip = e2.source_ip
+                AND e1.id < e2.id
+            JOIN ip_addresses ip ON ip.id = e1.source_ip
+            WHERE (JULIANDAY(e2.event_time) - JULIANDAY(e1.event_time)) * 1440
+                  <= ?
+            """,
+            (within_minutes,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
