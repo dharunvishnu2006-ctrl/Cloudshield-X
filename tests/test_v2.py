@@ -8,6 +8,7 @@ from src.reports import (
     propagation_trace,
 )
 from src.analytics_v2 import escalation_detector
+from src.ioc_store import IOCStore, compare_feeds, DomainTrie
 
 
 def test_schema_and_fk():
@@ -158,3 +159,34 @@ def test_recursive_cte_terminates():
 
     assert hosts_found == {"test-A", "test-B", "test-C"}
     assert len(results) == 3
+
+
+def test_hash_table_stores_and_finds():
+    store = IOCStore()
+    store.add("185.220.101.5")
+    assert store.is_blocked("185.220.101.5") is True
+    assert store.is_blocked("9.9.9.9") is False
+
+
+def test_hash_table_survives_collision():
+    store = IOCStore()
+    store.add("test-key-11")
+    store.add("test-key-20")
+    assert store.is_blocked("test-key-11") is True
+    assert store.is_blocked("test-key-20") is True
+
+
+def test_compare_feeds_intersection_and_difference():
+    feed_a = {"1.1.1.1", "2.2.2.2", "3.3.3.3"}
+    feed_b = {"2.2.2.2", "3.3.3.3", "4.4.4.4"}
+    result = compare_feeds(feed_a, feed_b)
+    assert result["agreed"] == {"2.2.2.2", "3.3.3.3"}
+    assert result["only_in_a"] == {"1.1.1.1"}
+    assert result["only_in_b"] == {"4.4.4.4"}
+
+
+def test_trie_matches_subdomains():
+    trie = DomainTrie()
+    trie.insert("evil.com")
+    assert trie.matches("login.evil.com") is True
+    assert trie.matches("evilbank.com") is False
