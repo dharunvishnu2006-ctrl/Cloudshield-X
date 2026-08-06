@@ -64,3 +64,14 @@ def merge_sort(items: list) -> list:
     left = merge_sort(arr[:mid])
     right = merge_sort(arr[mid:])
     return _merge(left, right)
+
+
+def quick_sort(items: list) -> list:
+    """Sort by picking a pivot and partitioning around it."""
+    arr = items.copy()
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[0]
+    smaller = [x for x in arr[1:] if x < pivot]
+    larger = [x for x in arr[1:] if x >= pivot]
+    return quick_sort(smaller) + [pivot] + quick_sort(larger)
