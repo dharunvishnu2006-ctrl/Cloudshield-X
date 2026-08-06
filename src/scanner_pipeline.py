@@ -77,3 +77,18 @@ def build_scanner_pipeline():
     detect.next = store
 
     return read
+
+
+def brackets_balanced(text: str) -> bool:
+    """Check if all brackets in text are properly matched, using a stack."""
+    stack: list = []
+    pairs = {")": "(", "]": "[", "}": "{"}
+
+    for char in text:
+        if char in "([{":
+            stack.append(char)
+        elif char in ")]}":
+            if not stack or stack.pop() != pairs[char]:
+                return False
+
+    return len(stack) == 0
