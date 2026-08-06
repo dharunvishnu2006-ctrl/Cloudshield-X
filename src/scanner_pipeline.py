@@ -1,3 +1,6 @@
+from src.reader import read_events
+
+
 class PipelineStage:
     """One stage in the scanner pipeline - a name, a function to run, and a link
     to the next stage."""
@@ -14,3 +17,63 @@ class PipelineStage:
         if self.next is not None:
             return self.next.run(result)
         return result
+
+
+def stage_read(log_path: str) -> list:
+    """Stage 1: read all log lines using v1.1's generator reader."""
+    return list(read_events(log_path, run_id="f8-pipeline"))
+
+
+def stage_parse(log_events: list) -> list:
+    """Stage 2: turn LogEvent dataclass objects into plain event dicts."""
+    parsed = []
+    for e in log_events:
+        parsed.append(
+            {
+                "ip": e.ip,
+                "event_time": e.timestamp,
+                "event_type": e.method,
+                "request": e.path,
+                "status": e.status,
+                "severity_score": None,
+            }
+        )
+    return parsed
+
+
+def stage_enrich(events: list) -> list:
+    """Stage 3: give every event a real severity score, based on status code."""
+    for event in events:
+        event["severity_score"] = 8.0 if event["status"] in (401, 403) else 2.0
+    return events
+
+
+def stage_detect(events: list) -> list:
+    """Stage 4: flag events with severity above 5 as suspicious."""
+    for event in events:
+        event["suspicious"] = event["severity_score"] > 5
+    return events
+
+
+def stage_store(events: list) -> int:
+    """Stage 5: insert all events into the database, return count inserted."""
+    from src.db import insert_events
+
+    clean_events = [{k: v for k, v in e.items() if k != "suspicious"} for e in events]
+    return insert_events(clean_events)
+
+
+def build_scanner_pipeline():
+    """Build and return the full read -> parse -> enrich -> detect -> store chain."""
+    read = PipelineStage("read", stage_read)
+    parse = PipelineStage("parse", stage_parse)
+    enrich = PipelineStage("enrich", stage_enrich)
+    detect = PipelineStage("detect", stage_detect)
+    store = PipelineStage("store", stage_store)
+
+    read.next = parse
+    parse.next = enrich
+    enrich.next = detect
+    detect.next = store
+
+    return read
