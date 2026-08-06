@@ -75,3 +75,15 @@ def quick_sort(items: list) -> list:
     smaller = [x for x in arr[1:] if x < pivot]
     larger = [x for x in arr[1:] if x >= pivot]
     return quick_sort(smaller) + [pivot] + quick_sort(larger)
+
+
+def counting_sort_severity(items: list) -> list:
+    """Sort severity values 0-3 (LOW to CRITICAL) in one pass, no comparisons."""
+    counts = [0, 0, 0, 0]
+    for value in items:
+        counts[value] += 1
+
+    result = []
+    for severity in range(4):
+        result.extend([severity] * counts[severity])
+    return result
