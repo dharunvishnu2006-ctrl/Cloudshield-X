@@ -1,3 +1,6 @@
+import heapq
+
+
 def bubble_sort(items: list) -> list:
     """Sort by repeatedly swapping adjacent out-of-order pairs."""
     arr = items.copy()
@@ -87,3 +90,14 @@ def counting_sort_severity(items: list) -> list:
     for severity in range(4):
         result.extend([severity] * counts[severity])
     return result
+
+
+def top_k_threats(severities: list, k: int = 10) -> list:
+    """Return the k largest severities using a size-k min-heap."""
+    heap: list = []
+    for value in severities:
+        if len(heap) < k:
+            heapq.heappush(heap, value)
+        elif value > heap[0]:
+            heapq.heapreplace(heap, value)
+    return sorted(heap, reverse=True)
