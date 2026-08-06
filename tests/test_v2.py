@@ -17,6 +17,9 @@ from src.ranking import (
     top_k_threats,
 )
 from src.bst import BST, AVLTree
+from src.pipeline import linear_scan, binary_search, first_line_at_or_after
+from src.lru_cache import LRUCache
+from src.scanner_pipeline import brackets_balanced, AlertQueue
 
 
 def test_schema_and_fk():
@@ -233,3 +236,41 @@ def test_bst_degrades_avl_stays_balanced():
         avl.insert(value)
     assert bst.height() == 5
     assert avl.height() == 3
+
+
+def test_binary_search_matches_linear_search():
+    data = sorted([3, 7, 1, 9, 4, 8, 2, 10, 6, 5])
+    assert binary_search(data, 7) == linear_scan(data, 7)
+    assert binary_search(data, 99) == linear_scan(data, 99)
+
+
+def test_first_line_at_or_after_finds_gaps_boundary():
+    timestamps = ["10:00", "10:05", "10:05", "10:10", "10:15"]
+    idx = first_line_at_or_after(timestamps, "10:07")
+    assert timestamps[idx] == "10:10"
+
+
+def test_lru_evicts_oldest():
+    cache = LRUCache(capacity=3)
+    cache.put("a", 1)
+    cache.put("b", 2)
+    cache.put("c", 3)
+    cache.get("a")
+    cache.put("d", 4)
+    assert cache.get("b") is None
+    assert cache.get("a") == 1
+
+
+def test_brackets_balanced_catches_mismatch():
+    assert brackets_balanced("{[}]") is False
+    assert brackets_balanced("{[]}") is True
+
+
+def test_alert_queue_is_fifo_not_lifo():
+    queue = AlertQueue()
+    queue.enqueue("A")
+    queue.enqueue("B")
+    queue.enqueue("C")
+    assert queue.dequeue() == "A"
+    assert queue.dequeue() == "B"
+    assert queue.dequeue() == "C"
