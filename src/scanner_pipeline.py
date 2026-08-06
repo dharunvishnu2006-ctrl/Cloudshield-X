@@ -1,4 +1,5 @@
 from src.reader import read_events
+from collections import deque
 
 
 class PipelineStage:
@@ -92,3 +93,23 @@ def brackets_balanced(text: str) -> bool:
                 return False
 
     return len(stack) == 0
+
+
+class AlertQueue:
+    """A FIFO queue for alerts - processed in the order they arrived."""
+
+    def __init__(self):
+        self.items = deque()
+
+    def enqueue(self, alert) -> None:
+        """Add a new alert to the back of the queue."""
+        self.items.append(alert)
+
+    def dequeue(self):
+        """Remove and return the oldest alert - the front of the queue."""
+        if not self.items:
+            return None
+        return self.items.popleft()
+
+    def __len__(self) -> int:
+        return len(self.items)
