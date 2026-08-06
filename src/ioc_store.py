@@ -29,3 +29,32 @@ def compare_feeds(feed_a: set, feed_b: set) -> dict:
         "only_in_a": feed_a - feed_b,
         "only_in_b": feed_b - feed_a,
     }
+
+
+class DomainTrie:
+    """A trie for matching a domain against known-bad parent domains."""
+
+    def __init__(self):
+        self.root: dict = {}
+
+    def insert(self, domain: str) -> None:
+        """Insert a domain, one node per label, reversed (com -> evil -> login)."""
+        labels = domain.split(".")[::-1]
+        node = self.root
+        for label in labels:
+            if label not in node:
+                node[label] = {}
+            node = node[label]
+        node["$end"] = True
+
+    def matches(self, domain: str) -> bool:
+        """Return True if domain is, or is a subdomain of, a known-bad domain."""
+        labels = domain.split(".")[::-1]
+        node = self.root
+        for label in labels:
+            if label not in node:
+                return False
+            node = node[label]
+            if "$end" in node:
+                return True
+        return False
