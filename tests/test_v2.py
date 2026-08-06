@@ -9,6 +9,14 @@ from src.reports import (
 )
 from src.analytics_v2 import escalation_detector
 from src.ioc_store import IOCStore, compare_feeds, DomainTrie
+from src.ranking import (
+    bubble_sort,
+    merge_sort,
+    quick_sort,
+    counting_sort_severity,
+    top_k_threats,
+)
+from src.bst import BST, AVLTree
 
 
 def test_schema_and_fk():
@@ -190,3 +198,38 @@ def test_trie_matches_subdomains():
     trie.insert("evil.com")
     assert trie.matches("login.evil.com") is True
     assert trie.matches("evilbank.com") is False
+
+
+def test_sorts_agree_with_python_sorted():
+    import random
+
+    random.seed(7)
+    data = [random.randint(1, 1000) for _ in range(200)]
+    expected = sorted(data)
+    assert bubble_sort(data) == expected
+    assert merge_sort(data) == expected
+    assert quick_sort(data) == expected
+
+
+def test_counting_sort_severity_buckets():
+    assert counting_sort_severity([2, 0, 1, 2, 0, 3, 1]) == [0, 0, 1, 1, 2, 2, 3]
+
+
+def test_top_k_matches_full_sort():
+    import random
+
+    random.seed(11)
+    data = [random.randint(1, 100000) for _ in range(500)]
+    heap_result = top_k_threats(data, k=10)
+    full_sort_result = sorted(data, reverse=True)[:10]
+    assert heap_result == full_sort_result
+
+
+def test_bst_degrades_avl_stays_balanced():
+    bst = BST()
+    avl = AVLTree()
+    for value in [1, 2, 3, 4, 5]:
+        bst.insert(value)
+        avl.insert(value)
+    assert bst.height() == 5
+    assert avl.height() == 3
