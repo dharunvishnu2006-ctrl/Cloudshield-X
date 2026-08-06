@@ -18,3 +18,15 @@ def binary_search(sorted_ips: list, target: str) -> bool:
         else:
             high = mid - 1
     return False
+
+
+def first_line_at_or_after(timestamps: list, target: str) -> int:
+    """Find the index of the first timestamp >= target, using binary search."""
+    low, high = 0, len(timestamps)
+    while low < high:
+        mid = (low + high) // 2
+        if timestamps[mid] < target:
+            low = mid + 1
+        else:
+            high = mid
+    return low
