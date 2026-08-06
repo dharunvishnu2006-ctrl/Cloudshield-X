@@ -20,3 +20,12 @@ class IOCStore:
         """Check if a key exists in the store, O(1) average."""
         idx = self._hash(key)
         return key in self.buckets[idx]
+
+
+def compare_feeds(feed_a: set, feed_b: set) -> dict:
+    """Compare two threat feeds using set operations."""
+    return {
+        "agreed": feed_a & feed_b,
+        "only_in_a": feed_a - feed_b,
+        "only_in_b": feed_b - feed_a,
+    }
