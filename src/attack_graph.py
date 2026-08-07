@@ -169,6 +169,29 @@ class AttackGraph:
 
         return mst_edges
 
+    def topological_sort(self) -> tuple:
+        """Return a valid patch order respecting dependencies.
+        Returns (order, has_cycle)."""
+        in_degree = {host: 0 for host in self.adjacency}
+        for host in self.adjacency:
+            for neighbor, _ in self.neighbors(host):
+                in_degree[neighbor] = in_degree.get(neighbor, 0) + 1
+
+        queue = deque([host for host, deg in in_degree.items() if deg == 0])
+        order = []
+
+        while queue:
+            current = queue.popleft()
+            order.append(current)
+
+            for neighbor, _ in self.neighbors(current):
+                in_degree[neighbor] -= 1
+                if in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+
+        has_cycle = len(order) != len(self.adjacency)
+        return order, has_cycle
+
 
 class UnionFind:
     """Disjoint Set Union - groups hosts into connected segments."""
