@@ -9,6 +9,7 @@ from src.attack_graph import load_graph_from_db
 from src.schemas import ScanRequest, PlanRequest
 from src.planner import prioritize
 from src.lru_cache import LRUCache
+from src.health import build_health_report
 
 profile_cache = LRUCache(capacity=100)
 
@@ -161,29 +162,9 @@ def get_plan():
 
 @app.route("/health", methods=["GET"])
 def health_check():
-    try:
-        with get_connection() as conn:
-            cursor = conn.execute("SELECT COUNT(*) as count FROM alerts")
-            alert_count = cursor.fetchone()["count"]
-
-            cursor = conn.execute("SELECT MAX(at) as last_scan FROM alerts")
-            last_scan = cursor.fetchone()["last_scan"]
-
-        return (
-            jsonify(
-                {
-                    "status": "ok",
-                    "alert_count": alert_count,
-                    "last_scan": last_scan,
-                    "db": "connected",
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return jsonify({"status": "error", "db": "disconnected", "error": str(e)}), 500
+    report = build_health_report()
+    status_code = 503 if report["database"] == "down" else 200
+    return jsonify(report), status_code
 
 
 if __name__ == "__main__":
