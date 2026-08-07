@@ -22,6 +22,7 @@ from src.lru_cache import LRUCache
 from src.scanner_pipeline import brackets_balanced, AlertQueue
 from src.attack_graph import AttackGraph
 from src.burst import sliding_window_burst
+from src.planner import prioritize, greedy_plan
 
 
 def test_schema_and_fk():
@@ -317,3 +318,21 @@ def test_sliding_window_burst():
     quiet_events = [("1.1.1.1", i * 100) for i in range(6)]
     quiet_result = sliding_window_burst(quiet_events, seconds=60, threshold=5)
     assert len(quiet_result) == 0
+
+
+def test_dp_beats_greedy():
+    threats = [("A", 5, 4), ("B", 4, 3), ("C", 3, 2)]
+    dp_total, dp_chosen = prioritize(threats, budget=5)
+    greedy_total, greedy_chosen = greedy_plan(threats, budget=5)
+
+    assert dp_total == 7
+    assert greedy_total == 5
+    assert dp_total > greedy_total
+
+
+def test_knapsack_respects_budget():
+    threats = [("X", 10, 6), ("Y", 8, 4), ("Z", 5, 2)]
+    total, chosen = prioritize(threats, budget=6)
+
+    used_effort = sum(effort for name, risk, effort in threats if name in chosen)
+    assert used_effort <= 6
