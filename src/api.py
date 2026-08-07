@@ -8,6 +8,22 @@ from src.analytics_v2 import daily_trend_with_running_total
 from src.attack_graph import load_graph_from_db
 from src.schemas import ScanRequest, PlanRequest
 from src.planner import prioritize
+from src.lru_cache import LRUCache
+
+profile_cache = LRUCache(capacity=100)
+
+
+def get_cached_profile(ip: str) -> list:
+    """Return an IP's profile, using the cache before hitting the database."""
+    cached = profile_cache.get(ip)
+
+    if cached is not None:
+        return cached
+
+    fresh = ip_profile(ip)
+    profile_cache.put(ip, fresh)
+    return fresh
+
 
 setup_logging()
 logger = get_logger("api")
@@ -72,7 +88,7 @@ def get_threats():
 
 @app.route("/threats/<ip>", methods=["GET"])
 def get_threat_profile(ip):
-    results = ip_profile(ip)
+    results = get_cached_profile(ip)
     if not results:
         return jsonify({"error": "no events found for this ip"}), 404
     return jsonify(results), 200
