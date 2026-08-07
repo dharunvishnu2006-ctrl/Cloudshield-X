@@ -8,6 +8,8 @@ from src.analytics import (
 )
 from src.charts import plot_request_distribution, plot_interactive_top_ips
 from src.store import init_db
+from src.health import build_health_report
+from src.reports import top_attackers
 
 setup_logging()
 init_db()
@@ -64,3 +66,21 @@ if uploaded_file is not None:
         st.error(f"⚠️ {len(suspicious)} suspicious IPs found!")
         for ip in suspicious:
             st.write(f"🔴 `{ip}`")
+
+st.divider()
+st.subheader("🔍 Threat Intelligence Overview")
+
+report = build_health_report()
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Total Events", report["tables"]["security_events"])
+col2.metric("Graph Hosts", report["graph_hosts"])
+col3.metric("Cache Hit Rate", f"{report['cache_hit_rate'] * 100:.0f}%")
+col4.metric("Database", report["database"])
+
+st.divider()
+st.subheader("🎯 Top Attackers")
+attackers = top_attackers(min_hits=0, limit=10)
+if attackers:
+    st.dataframe(attackers, use_container_width=True)
+else:
+    st.info("No attacker data yet — scan a log or POST to /scan first.")
