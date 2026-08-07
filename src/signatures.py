@@ -56,3 +56,25 @@ def kmp_search(text: str, pattern: str) -> list:
             i += 1
 
     return matches
+
+
+def ip_to_int(ip: str) -> int:
+    """Pack four octets into one 32-bit number."""
+    parts = ip.split(".")
+    result = 0
+
+    for part in parts:
+        result = (result << 8) | int(part)
+
+    return result
+
+
+def int_to_ip(n: int) -> str:
+    """Unpack a 32-bit number back into four dotted octets."""
+    parts: list = []
+
+    for _ in range(4):
+        parts.append(str(n & 255))
+        n >>= 8
+
+    return ".".join(reversed(parts))
