@@ -67,3 +67,17 @@ class SegmentTree:
         left_max = self._query(2 * node, start, mid, lo, r)
         right_max = self._query(2 * node + 1, mid + 1, end, lo, r)
         return max(left_max, right_max)
+
+
+def next_greater_severity(severities: list) -> list:
+    n = len(severities)
+    result = [-1] * n
+    stack: list = []
+
+    for i in range(n):
+        while stack and severities[i] > severities[stack[-1]]:
+            popped = stack.pop()
+            result[popped] = severities[i]
+        stack.append(i)
+
+    return result
