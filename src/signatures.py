@@ -78,3 +78,13 @@ def int_to_ip(n: int) -> str:
         n >>= 8
 
     return ".".join(reversed(parts))
+
+
+def in_subnet(ip: str, cidr: str) -> bool:
+    """Check if ip belongs to the given CIDR block, e.g. '203.0.113.0/24'."""
+    subnet_ip, prefix_str = cidr.split("/")
+    prefix = int(prefix_str)
+
+    mask = (0xFFFFFFFF << (32 - prefix)) & 0xFFFFFFFF
+
+    return (ip_to_int(ip) & mask) == (ip_to_int(subnet_ip) & mask)
