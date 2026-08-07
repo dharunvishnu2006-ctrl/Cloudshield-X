@@ -147,6 +147,28 @@ class AttackGraph:
 
         return dist
 
+    def minimum_spanning_tree(self) -> list:
+        """Return the cheapest set of edges that connects every host,
+        using Kruskal's algorithm."""
+        edges = []
+        for host, connections in self.adjacency.items():
+            for neighbor, weight in connections:
+                edges.append((weight, host, neighbor))
+
+        edges.sort()
+
+        uf = UnionFind()
+        for host in self.adjacency:
+            uf.make_set(host)
+
+        mst_edges = []
+        for weight, host, neighbor in edges:
+            if not uf.connected(host, neighbor):
+                uf.union(host, neighbor)
+                mst_edges.append((host, neighbor, weight))
+
+        return mst_edges
+
 
 class UnionFind:
     """Disjoint Set Union - groups hosts into connected segments."""
