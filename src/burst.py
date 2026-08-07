@@ -52,3 +52,18 @@ class SegmentTree:
         self._build(2 * node, start, mid)
         self._build(2 * node + 1, mid + 1, end)
         self.tree[node] = max(self.tree[2 * node], self.tree[2 * node + 1])
+
+    def query_max(self, lo: int, r: int) -> float:
+        return self._query(1, 0, self.n - 1, lo, r)
+
+    def _query(self, node: int, start: int, end: int, lo: int, r: int) -> float:
+        if r < start or end < lo:
+            return float("-inf")
+
+        if lo <= start and end <= r:
+            return self.tree[node]
+
+        mid = (start + end) // 2
+        left_max = self._query(2 * node, start, mid, lo, r)
+        right_max = self._query(2 * node + 1, mid + 1, end, lo, r)
+        return max(left_max, right_max)
