@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class AttackGraph:
     """A graph of hosts and their connections, using an adjacency list."""
 
@@ -15,3 +18,22 @@ class AttackGraph:
     def neighbors(self, host: str) -> list:
         """Return all hosts directly reachable from this host."""
         return self.adjacency.get(host, [])
+
+    def bfs(self, start: str, max_hops: int = 3) -> dict:
+        """Return every host reachable within max_hops, with their hop count."""
+        visited = {start: 0}
+        queue = deque([start])
+
+        while queue:
+            current = queue.popleft()
+            current_hops = visited[current]
+
+            if current_hops >= max_hops:
+                continue
+
+            for neighbor, _ in self.neighbors(current):
+                if neighbor not in visited:
+                    visited[neighbor] = current_hops + 1
+                    queue.append(neighbor)
+
+        return visited
