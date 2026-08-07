@@ -1,4 +1,21 @@
 from collections import deque
+from src.db import get_conn
+
+
+def load_graph_from_db() -> "AttackGraph":
+    """Build an AttackGraph from every row in host_links."""
+    conn = get_conn()
+    graph = AttackGraph()
+
+    try:
+        rows = conn.execute("SELECT src_host, dst_host FROM host_links").fetchall()
+
+        for row in rows:
+            graph.add_edge(row["src_host"], row["dst_host"])
+    finally:
+        conn.close()
+
+    return graph
 
 
 class AttackGraph:
