@@ -7,12 +7,14 @@ from src.analytics import (
     analyse_events,
 )
 from src.charts import plot_request_distribution, plot_interactive_top_ips
-from src.store import init_db
+from src.store import init_db as init_v1_db
+from src.db import init_db as init_v2_db
 from src.health import build_health_report
 from src.reports import top_attackers
 
 setup_logging()
-init_db()
+init_v1_db()
+init_v2_db()
 
 st.set_page_config(page_title="CloudShield X v2", page_icon="🛡️", layout="wide")
 
