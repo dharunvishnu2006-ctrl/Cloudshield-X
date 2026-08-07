@@ -60,3 +60,42 @@ class AttackGraph:
 
         found = _dfs_helper(start)
         return path if found else []
+
+    def dijkstra(self, start: str, end: str) -> tuple:
+        """Find the cheapest-cost path from start to end."""
+        import heapq
+
+        distances = {start: 0.0}
+        previous: dict = {}
+        visited = set()
+        heap = [(0.0, start)]
+
+        while heap:
+            current_dist, current = heapq.heappop(heap)
+
+            if current in visited:
+                continue
+            visited.add(current)
+
+            if current == end:
+                break
+
+            for neighbor, weight in self.neighbors(current):
+                new_dist = current_dist + weight
+                if neighbor not in distances or new_dist < distances[neighbor]:
+                    distances[neighbor] = new_dist
+                    previous[neighbor] = current
+                    heapq.heappush(heap, (new_dist, neighbor))
+
+        if end not in distances:
+            return [], float("inf")
+
+        path = []
+        node = end
+        while node != start:
+            path.append(node)
+            node = previous[node]
+        path.append(start)
+        path.reverse()
+
+        return path, distances[end]
