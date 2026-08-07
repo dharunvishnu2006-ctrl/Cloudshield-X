@@ -55,3 +55,18 @@ those logs and catches them automatically.
 - `host_links` has no weight column — every edge defaults to weight
   1.0, so Dijkstra's "cheapest route" currently equals BFS's "fewest
   hops." A real CVSS-based weight column is a genuine future addition.
+
+  ### Deployment Lessons (v2)
+- **Case-sensitive filenames** — `pages/4_about.py` (lowercase) was
+  staged and pushed as `pages/4_About.py` (capital A) in git commands.
+  Windows' case-insensitive filesystem hid this locally; GitHub's
+  Linux servers are case-sensitive, so the file silently never
+  reached the repository. Found only through real cloud deployment.
+  Lesson: verify a file's exact real name with `dir`/`ls` before
+  trusting a git command that references it by a typed path.
+- **v1.1 and v2 schemas both need initializing on startup** —
+  `app.py` originally called only `src.store.init_db()` (v1.1's
+  alerts table). `src.db.init_db()` (v2's real schema) was never
+  called at all, invisible locally because the dev database already
+  had v2's tables from manual testing. A genuinely fresh cloud
+  deployment exposed the missing call immediately.
