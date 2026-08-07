@@ -48,3 +48,29 @@ def sequence_similarity(seq_a: list, seq_b: list) -> int:
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
 
     return dp[m][n]
+
+
+def prioritize(threats: list, budget: int) -> tuple:
+    n = len(threats)
+    dp = [[0] * (budget + 1) for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        name, risk, efforts = threats[i - 1]
+
+        for w in range(budget + 1):
+            if efforts > w:
+                dp[i][w] = dp[i - 1][w]
+            else:
+                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - efforts] + risk)
+
+    chosen = []
+    w = budget
+
+    for i in range(n, 0, -1):
+        if dp[i][w] != dp[i - 1][w]:
+            name, risk, effort = threats[i - 1]
+            chosen.append(name)
+            w -= effort
+
+    chosen.reverse()
+    return dp[n][budget], chosen
