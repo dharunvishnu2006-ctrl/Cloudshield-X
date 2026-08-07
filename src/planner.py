@@ -34,3 +34,17 @@ def max_risk_non_adjacent(risks: list) -> int:
         dp[i] = max(dp[i - 1], dp[i - 2] + risks[i])
 
     return dp[-1]
+
+
+def sequence_similarity(seq_a: list, seq_b: list) -> int:
+    m, n = len(seq_a), len(seq_b)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if seq_a[i - 1] == seq_b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+
+    return dp[m][n]
