@@ -2,11 +2,12 @@ import os
 from flask import Flask, jsonify, request
 from src.store import get_connection
 from src.logging_setup import get_logger, setup_logging
-from src.schemas import ScanRequest
 from src.scanner_pipeline import build_scanner_pipeline
 from src.reports import top_attackers, ip_profile, propagation_trace
 from src.analytics_v2 import daily_trend_with_running_total
 from src.attack_graph import load_graph_from_db
+from src.schemas import ScanRequest, PlanRequest
+from src.planner import prioritize
 
 setup_logging()
 logger = get_logger("api")
@@ -124,6 +125,22 @@ def get_graph_cheapest():
     if not path:
         return jsonify({"error": "no path found"}), 404
     return jsonify({"path": path, "cost": cost}), 200
+
+
+@app.route("/plan", methods=["POST"])
+def get_plan():
+    try:
+        payload = PlanRequest(**request.get_json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    try:
+        threats = [tuple(t) for t in payload.threats]
+        total, chosen = prioritize(threats, payload.budget)
+    except Exception as e:
+        return jsonify({"error": f"invalid threats format: {e}"}), 400
+
+    return jsonify({"total_risk_reduced": total, "chosen": chosen}), 200
 
 
 @app.route("/health", methods=["GET"])
