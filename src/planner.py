@@ -90,3 +90,24 @@ def greedy_plan(threats: list, budget: int) -> tuple:
             remaining -= effort
 
     return total, chosen
+
+
+def find_attack_chains(ports: list, min_chain_risk: int) -> list:
+    """Enumerate minimal port chains that reach min_chain_risk."""
+
+    ordered = sorted(ports, key=lambda p: p[1], reverse=True)
+    results: list = []
+
+    def backtrack(start: int, current: list, risk: int) -> None:
+        if current and risk >= min_chain_risk:
+            results.append(list(current))
+            return
+
+        for i in range(start, len(ordered)):
+            name, port_risk = ordered[i]
+            current.append(name)
+            backtrack(i + 1, current, risk + port_risk)
+            current.pop()
+
+    backtrack(0, [], 0)
+    return results
