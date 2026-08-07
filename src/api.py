@@ -36,6 +36,28 @@ swagger = Swagger(app)
 
 @app.route("/alerts", methods=["GET"])
 def get_alerts():
+    """Return alerts from v1.1's detection log.
+    ---
+    parameters:
+      - name: severity
+        in: query
+        type: string
+        required: false
+      - name: since
+        in: query
+        type: string
+        required: false
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        default: 100
+    responses:
+      200:
+        description: A list of alerts
+      400:
+        description: limit out of range
+    """
     severity = request.args.get("severity")
     since = request.args.get("since")
     limit = request.args.get("limit", 100, type=int)
@@ -72,6 +94,27 @@ def get_alerts():
 
 @app.route("/scan", methods=["POST"])
 def scan_log():
+    """Run the F8 scanner pipeline on a log file inside data/.
+    ---
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            log_path:
+              type: string
+              example: data/sample_server.log
+            threshold:
+              type: integer
+              default: 3
+    responses:
+      200:
+        description: Number of events inserted
+      400:
+        description: Invalid or unsafe log_path
+    """
     try:
         payload = ScanRequest(**request.get_json())
     except Exception as e:
@@ -84,6 +127,18 @@ def scan_log():
 
 @app.route("/threats", methods=["GET"])
 def get_threats():
+    """Return the top attacking IPs, ranked by hit count.
+    ---
+    parameters:
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        default: 10
+    responses:
+      200:
+        description: A list of IPs with hits and average severity
+    """
     limit = request.args.get("limit", 10, type=int)
     results = top_attackers(min_hits=0, limit=limit)
     return jsonify(results), 200
@@ -91,6 +146,19 @@ def get_threats():
 
 @app.route("/threats/<ip>", methods=["GET"])
 def get_threat_profile(ip):
+    """Return the full event history for one IP, using the LRU cache.
+    ---
+    parameters:
+      - name: ip
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Event history for this IP
+      404:
+        description: No events found for this IP
+    """
     results = get_cached_profile(ip)
     if not results:
         return jsonify({"error": "no events found for this ip"}), 404
@@ -99,12 +167,31 @@ def get_threat_profile(ip):
 
 @app.route("/trend", methods=["GET"])
 def get_trend():
+    """Return daily event counts with a running total and 7-day average.
+    ---
+    responses:
+      200:
+        description: Daily trend data
+    """
     results = daily_trend_with_running_total()
     return jsonify(results), 200
 
 
 @app.route("/propagation", methods=["GET"])
 def get_propagation():
+    """Trace every host reachable from a starting host, via a recursive CTE.
+    ---
+    parameters:
+      - name: host
+        in: query
+        type: string
+        required: true
+    responses:
+      200:
+        description: Reachable hosts with hop counts
+      400:
+        description: Missing host parameter
+    """
     host = request.args.get("host")
 
     if not host:
@@ -116,6 +203,25 @@ def get_propagation():
 
 @app.route("/graph/paths", methods=["GET"])
 def get_graph_paths():
+    """Find a valid path between two hosts using DFS.
+    ---
+    parameters:
+      - name: source
+        in: query
+        type: string
+        required: true
+      - name: target
+        in: query
+        type: string
+        required: true
+    responses:
+      200:
+        description: A valid path from source to target
+      400:
+        description: Missing source or target
+      404:
+        description: No path found
+    """
     source = request.args.get("source")
     target = request.args.get("target")
 
@@ -132,6 +238,25 @@ def get_graph_paths():
 
 @app.route("/graph/cheapest", methods=["GET"])
 def get_graph_cheapest():
+    """Find the cheapest path between two hosts using Dijkstra.
+    ---
+    parameters:
+      - name: source
+        in: query
+        type: string
+        required: true
+      - name: target
+        in: query
+        type: string
+        required: true
+    responses:
+      200:
+        description: The cheapest path and its total cost
+      400:
+        description: Missing source or target
+      404:
+        description: No path found
+    """
     source = request.args.get("source")
     target = request.args.get("target")
 
@@ -148,6 +273,27 @@ def get_graph_cheapest():
 
 @app.route("/plan", methods=["POST"])
 def get_plan():
+    """Choose which threats to mitigate inside a budget, using 0/1 knapsack.
+    ---
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            threats:
+              type: array
+              example: [["sql_injection", 9, 3], ["port_scan", 4, 1]]
+            budget:
+              type: integer
+              example: 5
+    responses:
+      200:
+        description: Total risk reduced and the chosen threats
+      400:
+        description: Invalid request body
+    """
     try:
         payload = PlanRequest(**request.get_json())
     except Exception as e:
@@ -164,6 +310,14 @@ def get_plan():
 
 @app.route("/health", methods=["GET"])
 def health_check():
+    """Return a genuine health report - database, tables, index, cache, uptime.
+    ---
+    responses:
+      200:
+        description: Everything is healthy
+      503:
+        description: Database is down
+    """
     report = build_health_report()
     status_code = 503 if report["database"] == "down" else 200
     return jsonify(report), status_code
