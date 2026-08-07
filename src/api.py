@@ -4,7 +4,8 @@ from src.store import get_connection
 from src.logging_setup import get_logger, setup_logging
 from src.schemas import ScanRequest
 from src.scanner_pipeline import build_scanner_pipeline
-from src.reports import top_attackers
+from src.reports import top_attackers, ip_profile
+from src.analytics_v2 import daily_trend_with_running_total
 
 setup_logging()
 logger = get_logger("api")
@@ -64,6 +65,20 @@ def scan_log():
 def get_threats():
     limit = request.args.get("limit", 10, type=int)
     results = top_attackers(min_hits=0, limit=limit)
+    return jsonify(results), 200
+
+
+@app.route("/threats/<ip>", methods=["GET"])
+def get_threat_profile(ip):
+    results = ip_profile(ip)
+    if not results:
+        return jsonify({"error": "no events found for this ip"}), 404
+    return jsonify(results), 200
+
+
+@app.route("/trend", methods=["GET"])
+def get_trend():
+    results = daily_trend_with_running_total()
     return jsonify(results), 200
 
 

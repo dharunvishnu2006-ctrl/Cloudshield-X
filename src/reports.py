@@ -103,6 +103,28 @@ def full_profile(limit: int = 20) -> list[dict]:
         conn.close()
 
 
+def ip_profile(ip: str) -> list[dict]:
+    """Return the full event history for one specific IP."""
+    conn = get_conn()
+    try:
+        rows = conn.execute(
+            """
+            SELECT e.id, e.event_time,
+                   COALESCE(a.name, 'Unknown') AS actor,
+                   e.severity_score
+            FROM security_events e
+            JOIN ip_addresses ip ON ip.id = e.source_ip
+            LEFT JOIN threat_actors a ON a.id = e.actor_id
+            WHERE ip.ip = ?
+            ORDER BY e.event_time
+            """,
+            (ip,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
 def never_attacked_ips() -> list[str]:
     """Return IPs that exist in our records but have zero events."""
     conn = get_conn()
