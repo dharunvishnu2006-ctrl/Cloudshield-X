@@ -390,3 +390,33 @@ def test_propagation_endpoint_requires_host():
     client = app.test_client()
     r = client.get("/propagation")
     assert r.status_code == 400
+
+
+def test_health_endpoint_returns_real_fields():
+    from src.api import app
+
+    client = app.test_client()
+    r = client.get("/health")
+    data = r.get_json()
+
+    assert r.status_code == 200
+    assert data["database"] == "connected"
+    assert "tables" in data
+    assert "graph_hosts" in data
+    assert "cache_hit_rate" in data
+
+
+def test_health_graph_hosts_counts_destination_only_host():
+    from src.db import get_conn
+    from src.health import build_health_report
+
+    conn = get_conn()
+    conn.executemany(
+        "INSERT INTO host_links (src_host, dst_host) VALUES (?, ?)",
+        [("hh-1", "hh-2"), ("hh-2", "hh-3")],
+    )
+    conn.commit()
+    conn.close()
+
+    report = build_health_report()
+    assert report["graph_hosts"]
