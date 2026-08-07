@@ -21,6 +21,7 @@ from src.pipeline import linear_scan, binary_search, first_line_at_or_after
 from src.lru_cache import LRUCache
 from src.scanner_pipeline import brackets_balanced, AlertQueue
 from src.attack_graph import AttackGraph
+from src.burst import sliding_window_burst
 
 
 def test_schema_and_fk():
@@ -299,3 +300,20 @@ def test_no_path_when_isolated():
     path, cost = g.dijkstra("A", "isolated-host")
     assert path == []
     assert cost == float("inf")
+
+
+def test_sliding_window_burst():
+    events = [
+        ("1.1.1.1", 0),
+        ("1.1.1.1", 1),
+        ("1.1.1.1", 2),
+        ("1.1.1.1", 3),
+        ("1.1.1.1", 4),
+        ("1.1.1.1", 5),
+    ]
+    result = sliding_window_burst(events, seconds=60, threshold=5)
+    assert len(result) > 0
+
+    quiet_events = [("1.1.1.1", i * 100) for i in range(6)]
+    quiet_result = sliding_window_burst(quiet_events, seconds=60, threshold=5)
+    assert len(quiet_result) == 0
