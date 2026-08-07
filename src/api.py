@@ -4,7 +4,7 @@ from src.store import get_connection
 from src.logging_setup import get_logger, setup_logging
 from src.schemas import ScanRequest
 from src.scanner_pipeline import build_scanner_pipeline
-from src.reports import top_attackers, ip_profile
+from src.reports import top_attackers, ip_profile, propagation_trace
 from src.analytics_v2 import daily_trend_with_running_total
 
 setup_logging()
@@ -79,6 +79,17 @@ def get_threat_profile(ip):
 @app.route("/trend", methods=["GET"])
 def get_trend():
     results = daily_trend_with_running_total()
+    return jsonify(results), 200
+
+
+@app.route("/propagation", methods=["GET"])
+def get_propagation():
+    host = request.args.get("host")
+
+    if not host:
+        return jsonify({"error": "host query parameter is required"}), 400
+
+    results = propagation_trace(host)
     return jsonify(results), 200
 
 
