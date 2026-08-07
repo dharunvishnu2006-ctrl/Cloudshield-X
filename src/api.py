@@ -6,6 +6,7 @@ from src.schemas import ScanRequest
 from src.scanner_pipeline import build_scanner_pipeline
 from src.reports import top_attackers, ip_profile, propagation_trace
 from src.analytics_v2 import daily_trend_with_running_total
+from src.attack_graph import load_graph_from_db
 
 setup_logging()
 logger = get_logger("api")
@@ -91,6 +92,38 @@ def get_propagation():
 
     results = propagation_trace(host)
     return jsonify(results), 200
+
+
+@app.route("/graph/paths", methods=["GET"])
+def get_graph_paths():
+    source = request.args.get("source")
+    target = request.args.get("target")
+
+    if not source or not target:
+        return jsonify({"error": "source and target are required"}), 400
+
+    graph = load_graph_from_db()
+    path = graph.dfs(source, target)
+
+    if not path:
+        return jsonify({"error": "no path found"}), 404
+    return jsonify({"path": path}), 200
+
+
+@app.route("/graph/cheapest", methods=["GET"])
+def get_graph_cheapest():
+    source = request.args.get("source")
+    target = request.args.get("target")
+
+    if not source or not target:
+        return jsonify({"error": "source and target are required"}), 400
+
+    graph = load_graph_from_db()
+    path, cost = graph.dijkstra(source, target)
+
+    if not path:
+        return jsonify({"error": "no path found"}), 404
+    return jsonify({"path": path, "cost": cost}), 200
 
 
 @app.route("/health", methods=["GET"])
