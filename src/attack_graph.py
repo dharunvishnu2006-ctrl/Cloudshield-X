@@ -146,3 +146,33 @@ class AttackGraph:
                         dist[i][j] = through_k
 
         return dist
+
+
+class UnionFind:
+    """Disjoint Set Union - groups hosts into connected segments."""
+
+    def __init__(self):
+        self.parent: dict = {}
+
+    def make_set(self, host: str) -> None:
+        """Register a new host as its own segment, if not already known."""
+        if host not in self.parent:
+            self.parent[host] = host
+
+    def find(self, host: str) -> str:
+        """Find the root of host's segment, with path compression."""
+        self.make_set(host)
+        if self.parent[host] != host:
+            self.parent[host] = self.find(self.parent[host])
+        return self.parent[host]
+
+    def union(self, a: str, b: str) -> None:
+        """Merge the segments containing a and b."""
+        root_a = self.find(a)
+        root_b = self.find(b)
+        if root_a != root_b:
+            self.parent[root_a] = root_b
+
+    def connected(self, a: str, b: str) -> bool:
+        """Return True if a and b are in the same segment."""
+        return self.find(a) == self.find(b)
