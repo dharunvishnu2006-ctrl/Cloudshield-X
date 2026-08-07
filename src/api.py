@@ -10,6 +10,7 @@ from src.schemas import ScanRequest, PlanRequest
 from src.planner import prioritize
 from src.lru_cache import LRUCache
 from src.health import build_health_report
+from flasgger import Swagger
 
 profile_cache = LRUCache(capacity=100)
 
@@ -30,6 +31,7 @@ setup_logging()
 logger = get_logger("api")
 
 app = Flask(__name__)
+swagger = Swagger(app)
 
 
 @app.route("/alerts", methods=["GET"])
