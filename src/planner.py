@@ -74,3 +74,19 @@ def prioritize(threats: list, budget: int) -> tuple:
 
     chosen.reverse()
     return dp[n][budget], chosen
+
+
+def greedy_plan(threats: list, budget: int) -> tuple:
+    ordered = sorted(threats, key=lambda t: t[1], reverse=True)
+
+    chosen = []
+    total = 0
+    remaining = budget
+
+    for name, risk, effort in ordered:
+        if effort <= remaining:
+            chosen.append(name)
+            total += risk
+            remaining -= effort
+
+    return total, chosen
