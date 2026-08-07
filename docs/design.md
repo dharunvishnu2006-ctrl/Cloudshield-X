@@ -37,3 +37,21 @@ those logs and catches them automatically.
 - SQLite single-writer — fine for one scanner (v2 moves on)
 - No graph of related addresses yet (v2's attack graph)
 - Dashboard reads whole table — no pagination
+
+## v2 Update — Threat Intelligence Engine
+
+### New Data Model (v2)
+- `ip_addresses`, `threat_actors`, `security_events` — normalised,
+  foreign-key linked (F1)
+- `host_links` — attack graph edges, used by F5's recursive CTE
+  and F9's graph algorithms
+
+### New Known Limits (v2)
+- **SQLite on an ephemeral filesystem** — verified directly: deleting
+  the database file and restarting rebuilds cleanly with no crash,
+  but every row of data is genuinely lost. On a free hosting tier,
+  this happens automatically on every restart. Fixed in v3 with a
+  managed PostgreSQL instance.
+- `host_links` has no weight column — every edge defaults to weight
+  1.0, so Dijkstra's "cheapest route" currently equals BFS's "fewest
+  hops." A real CVSS-based weight column is a genuine future addition.
