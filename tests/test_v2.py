@@ -350,3 +350,43 @@ def test_in_subnet_checks_a_whole_block():
     assert in_subnet("203.0.113.5", "203.0.113.0/24") is True
     assert in_subnet("203.0.113.200", "203.0.113.0/24") is True
     assert in_subnet("203.0.114.5", "203.0.113.0/24") is False
+
+
+def test_scan_endpoint_rejects_bad_path():
+    from src.api import app
+
+    client = app.test_client()
+    r = client.post("/scan", json={"log_path": "/etc/passwd"})
+    assert r.status_code == 400
+
+
+def test_threats_endpoint_returns_list():
+    from src.api import app
+
+    insert_events([{"ip": "50.1.1.1", "event_time": "2026-08-07T10:00", "status": 403}])
+    client = app.test_client()
+    r = client.get("/threats?limit=5")
+    assert r.status_code == 200
+    assert isinstance(r.get_json(), list)
+
+
+def test_plan_endpoint_matches_dp_counterexample():
+    from src.api import app
+
+    client = app.test_client()
+    r = client.post(
+        "/plan",
+        json={"threats": [["A", 5, 4], ["B", 4, 3], ["C", 3, 2]], "budget": 5},
+    )
+    data = r.get_json()
+    assert r.status_code == 200
+    assert data["total_risk_reduced"] == 7
+    assert set(data["chosen"]) == {"B", "C"}
+
+
+def test_propagation_endpoint_requires_host():
+    from src.api import app
+
+    client = app.test_client()
+    r = client.get("/propagation")
+    assert r.status_code == 400
