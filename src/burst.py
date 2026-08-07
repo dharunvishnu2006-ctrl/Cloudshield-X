@@ -34,3 +34,21 @@ def correlate_feeds(log_a: list, log_b: list, within_seconds: int = 2) -> list:
             j += 1
 
     return matches
+
+
+class SegmentTree:
+    def __init__(self, data: list):
+        self.n = len(data)
+        self.tree = [float("-inf")] * (4 * self.n)
+        self.data = data
+        self._build(1, 0, self.n - 1)
+
+    def _build(self, node: int, start: int, end: int) -> None:
+        if start == end:
+            self.tree[node] = self.data[start]
+            return
+
+        mid = (start + end) // 2
+        self._build(2 * node, start, mid)
+        self._build(2 * node + 1, mid + 1, end)
+        self.tree[node] = max(self.tree[2 * node], self.tree[2 * node + 1])
