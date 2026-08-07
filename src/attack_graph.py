@@ -99,3 +99,29 @@ class AttackGraph:
         path.reverse()
 
         return path, distances[end]
+
+    def bellman_ford(self, start: str) -> tuple:
+        """Find cheapest distances from start, handling negative weights.
+        Returns (distances, has_negative_cycle)."""
+        all_hosts = list(self.adjacency.keys())
+        distances = {host: float("inf") for host in all_hosts}
+        distances[start] = 0.0
+
+        for _ in range(len(all_hosts) - 1):
+            for host in all_hosts:
+                if distances[host] == float("inf"):
+                    continue
+                for neighbor, weight in self.neighbors(host):
+                    new_dist = distances[host] + weight
+                    if new_dist < distances[neighbor]:
+                        distances[neighbor] = new_dist
+
+        has_negative_cycle = False
+        for host in all_hosts:
+            if distances[host] == float("inf"):
+                continue
+            for neighbor, weight in self.neighbors(host):
+                if distances[host] + weight < distances[neighbor]:
+                    has_negative_cycle = True
+
+        return distances, has_negative_cycle
