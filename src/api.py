@@ -2,6 +2,9 @@ import os
 from flask import Flask, jsonify, request
 from src.store import get_connection
 from src.logging_setup import get_logger, setup_logging
+from src.schemas import ScanRequest
+from src.scanner_pipeline import build_scanner_pipeline
+from src.reports import top_attackers
 
 setup_logging()
 logger = get_logger("api")
@@ -43,6 +46,25 @@ def get_alerts():
     except Exception as e:
         logger.error(f"GET /alerts failed: {e}")
         return jsonify({"error": "internal error"}), 500
+
+
+@app.route("/scan", methods=["POST"])
+def scan_log():
+    try:
+        payload = ScanRequest(**request.get_json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+    pipeline = build_scanner_pipeline()
+    count = pipeline.run(payload.log_path)
+    return jsonify({"events_inserted": count}), 200
+
+
+@app.route("/threats", methods=["GET"])
+def get_threats():
+    limit = request.args.get("limit", 10, type=int)
+    results = top_attackers(min_hits=0, limit=limit)
+    return jsonify(results), 200
 
 
 @app.route("/health", methods=["GET"])
