@@ -29,3 +29,30 @@ def build_failure_table(pattern: str) -> list:
             i += 1
 
     return table
+
+
+def kmp_search(text: str, pattern: str) -> list:
+    """Return every starting index where pattern occurs, without
+    ever re-examining a character in text."""
+    if not pattern:
+        return []
+
+    table = build_failure_table(pattern)
+    matches: list = []
+    i = j = 0
+    n, m = len(text), len(pattern)
+
+    while i < n:
+        if text[i] == pattern[j]:
+            i += 1
+            j += 1
+
+            if j == m:
+                matches.append(i - j)
+                j = table[j - 1]
+        elif j > 0:
+            j = table[j - 1]
+        else:
+            i += 1
+
+    return matches
