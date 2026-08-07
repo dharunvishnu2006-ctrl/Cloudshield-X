@@ -125,3 +125,24 @@ class AttackGraph:
                     has_negative_cycle = True
 
         return distances, has_negative_cycle
+
+    def floyd_warshall(self) -> dict:
+        """Return all-pairs shortest distances between every host."""
+        hosts = list(self.adjacency.keys())
+        dist = {i: {j: float("inf") for j in hosts} for i in hosts}
+
+        for host in hosts:
+            dist[host][host] = 0.0
+
+        for host in hosts:
+            for neighbor, weight in self.neighbors(host):
+                dist[host][neighbor] = weight
+
+        for k in hosts:
+            for i in hosts:
+                for j in hosts:
+                    through_k = dist[i][k] + dist[k][j]
+                    if through_k < dist[i][j]:
+                        dist[i][j] = through_k
+
+        return dist
