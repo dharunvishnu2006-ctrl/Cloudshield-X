@@ -20,6 +20,7 @@ from src.bst import BST, AVLTree
 from src.pipeline import linear_scan, binary_search, first_line_at_or_after
 from src.lru_cache import LRUCache
 from src.scanner_pipeline import brackets_balanced, AlertQueue
+from src.attack_graph import AttackGraph
 
 
 def test_schema_and_fk():
@@ -274,3 +275,27 @@ def test_alert_queue_is_fifo_not_lifo():
     assert queue.dequeue() == "A"
     assert queue.dequeue() == "B"
     assert queue.dequeue() == "C"
+
+
+def test_dijkstra_beats_bfs_on_weights():
+    g = AttackGraph()
+    g.add_edge("A", "B", weight=1)
+    g.add_edge("B", "D", weight=1)
+    g.add_edge("A", "D", weight=8)
+
+    bfs_result = g.bfs("A", max_hops=3)
+    assert bfs_result["D"] == 1
+
+    dijkstra_path, dijkstra_cost = g.dijkstra("A", "D")
+    assert dijkstra_path == ["A", "B", "D"]
+    assert dijkstra_cost == 2.0
+
+
+def test_no_path_when_isolated():
+    g = AttackGraph()
+    g.add_edge("A", "B", weight=1)
+    g.adjacency["isolated-host"] = []
+
+    path, cost = g.dijkstra("A", "isolated-host")
+    assert path == []
+    assert cost == float("inf")
