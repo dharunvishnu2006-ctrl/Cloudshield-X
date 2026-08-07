@@ -23,6 +23,7 @@ from src.scanner_pipeline import brackets_balanced, AlertQueue
 from src.attack_graph import AttackGraph
 from src.burst import sliding_window_burst
 from src.planner import prioritize, greedy_plan
+from src.signatures import naive_search, kmp_search, in_subnet
 
 
 def test_schema_and_fk():
@@ -336,3 +337,16 @@ def test_knapsack_respects_budget():
 
     used_effort = sum(effort for name, risk, effort in threats if name in chosen)
     assert used_effort <= 6
+
+
+def test_kmp_matches_naive():
+    text = "mississippi"
+    pattern = "issi"
+    assert kmp_search(text, pattern) == naive_search(text, pattern)
+    assert kmp_search(text, pattern) == [1, 4]
+
+
+def test_in_subnet_checks_a_whole_block():
+    assert in_subnet("203.0.113.5", "203.0.113.0/24") is True
+    assert in_subnet("203.0.113.200", "203.0.113.0/24") is True
+    assert in_subnet("203.0.114.5", "203.0.113.0/24") is False
