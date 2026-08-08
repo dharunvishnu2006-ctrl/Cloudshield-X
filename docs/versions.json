@@ -57,15 +57,35 @@
     },
     {
       "version": "v2",
-      "status": "planned",
+      "status": "shipped",
       "colour": "#10b981",
       "steps": "81-153",
       "completion": 25,
-      "description": "Threat Intelligence — DSA + SQL",
-      "features": [],
-      "tests": 0,
-      "steps_covered": 0,
-      "bugs_fixed": []
+      "description": "Threat Intelligence Engine — DSA + SQL",
+      "features": [
+        "F1: Threat Store — 3-table schema, foreign keys, index",
+        "F2: Threat Reports — SQL GROUP BY, window and date functions",
+        "F3: Threat Profile & Feed Reconciliation — joins, subqueries",
+        "F4: Attack Pattern Analytics — LAG, FIRST_VALUE, moving average",
+        "F5: Attack Propagation Trace — recursive CTE",
+        "F6: The IOC Store — own hash table, sets, domain trie",
+        "F7: The Ranking Engine — 6 sorts, min-heap top-K, BST/AVL",
+        "F8: The Scanner Pipeline — linked list stages, LRU cache, FIFO queue",
+        "F9: The Attack Graph Engine — BFS, DFS, Dijkstra, Union-Find, topo sort",
+        "F10: Burst & DDoS Detector — sliding window, segment tree",
+        "F11: The Response Planner — 0/1 knapsack DP vs greedy",
+        "F12: The Signature Matcher — KMP, bit manipulation subnet checks",
+        "F13: DSA in Security Context — full structure-to-feature map",
+        "Flask REST API — 8 new endpoints + Swagger docs at /apidocs",
+        "Streamlit dashboard — 4 pages, all reading real data, no hard-coded numbers"
+      ],
+      "tests": 35,
+      "steps_covered": 73,
+      "bugs_fixed": [
+        "app.py called v1.1's init_db() instead of v2's real schema — invisible locally because the dev database already had v2's tables, exposed only by a genuinely empty cloud filesystem",
+        "pages/4_about.py was pushed as pages/4_About.py due to a Windows/Linux filename case mismatch, silently keeping the page off the live deployment until checked on GitHub directly",
+        "Top-attackers report query ran slower with the (source_ip, event_time) index than without it, because the query filters on status not source_ip — the index helps the single-IP lookup (30x faster) but not this aggregate report"
+      ]
     },
     {
       "version": "v3",
