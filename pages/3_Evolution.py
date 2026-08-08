@@ -67,27 +67,43 @@ for v in shipped:
 st.divider()
 st.subheader("📝 Decisions (ADRs)")
 repo_url = "https://github.com/dharunvishnu2006-ctrl/Cloudshield-X/blob/main"
-st.markdown(
-    f"- [ADR 001 — Regex over split()]"
-    f"({repo_url}/docs/adr/001-regex-parser-over-split.md)\n"
-    f"- [ADR 002 — SQLite over memory]"
-    f"({repo_url}/docs/adr/002-sqlite-over-memory.md)\n"
-    f"- [ADR 003 — Radio page now, multipage at v2]"
-    f"({repo_url}/docs/adr/003-radio-page-now-multipage-at-v2.md)\n"
-)
+adrs = [
+    ("001", "Regex over split()", "001-regex-parser-over-split.md"),
+    ("002", "SQLite over memory", "002-sqlite-over-memory.md"),
+    ("003", "Radio page now, multipage at v2", "003-radio-page-now-multipage-at-v2.md"),
+    (
+        "004",
+        "Dashboard calls engine directly",
+        "004-dashboard-calls-engine-directly.md",
+    ),
+    ("005", "SQLite over PostgreSQL for v2", "005-sqlite-over-postgresql.md"),
+    ("006", "Own graph implementation over NetworkX", "006-own-graph-over-networkx.md"),
+    ("007", "Size-k heap over full sort for top-K", "007-heap-over-full-sort-topk.md"),
+    (
+        "008",
+        "DP over greedy for response planner",
+        "008-dp-over-greedy-response-planner.md",
+    ),
+]
+for number, title, filename in adrs:
+    st.markdown(f"- [ADR {number} — {title}]({repo_url}/docs/adr/{filename})")
 
 st.divider()
 st.subheader("⚠️ Known Limits")
 st.markdown(
     """
 - One log format only — new server needs new regex
-- Detection threshold-based — no ML until v4
-- SQLite single-writer — v2 moves to PostgreSQL
-- No graph of related addresses — v2's attack graph
+- No FULL OUTER JOIN in SQLite — F3 emulates it with two
+  LEFT JOINs and a UNION; native in v3's PostgreSQL
+- SQLite on an ephemeral filesystem — verified directly,
+  data is lost on every restart on a free hosting tier
+- host_links has no weight column — Dijkstra's cheapest
+  route currently equals BFS's fewest hops
+- Attack graph held entirely in memory — fine at this
+  version's scale, not built for 100,000 hosts
+- Floyd-Warshall is O(V³) — unusable past ~2,000 hosts
+- No authentication on the API — a natural fit for v4
+- Severity is rule-based, not learned — fixed in v4
 - Dashboard reads whole table — no pagination yet
-- Test coverage — core modules (scanner, versions) tested;
-  E1-E15 feature-level tests are a catch-up item for the next session
-- mypy debt — charts.py (empty-data return type) and summarise.py
-  (response block type narrowing) have known type errors; not fixed yet
 """
 )
