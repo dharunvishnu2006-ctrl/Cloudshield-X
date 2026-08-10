@@ -1,6 +1,6 @@
 import streamlit as st
 from src.versions import load_versions, feature_lines, bug_lines
-from src.versions import total_roadmap_steps
+from src.versions import total_roadmap_steps, cumulative_steps_at
 
 st.title("🗺️ How CloudShield X Grew")
 st.caption("Every number on this page comes from versions.json")
@@ -23,6 +23,7 @@ for i, v in enumerate(versions):
     is_shipped = v["status"] == "shipped"
     with cols[i]:
         if is_shipped:
+            cum_steps = cumulative_steps_at(versions, i)
             st.markdown(
                 f"<div style='background-color:{v['colour']};"
                 f"padding:8px;border-radius:6px;"
@@ -30,9 +31,10 @@ for i, v in enumerate(versions):
                 f"<b>{v['version']}</b><br/>"
                 f"{v['completion']}%<br/>"
                 f"<span style='font-size:0.75em'>"
-                f"{v['steps_covered']}/{grand_total} steps</span></div>",
+                f"{cum_steps}/{grand_total} steps</span></div>",
                 unsafe_allow_html=True,
             )
+
         else:
             st.markdown(
                 f"<div style='border:3px dashed {v['colour']};"
