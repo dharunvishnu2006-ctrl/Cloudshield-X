@@ -44,3 +44,17 @@ def total_roadmap_steps(versions: list[dict]) -> int:
     """Return the highest step number across all version ranges."""
     ends = [int(v["steps"].split("-")[1]) for v in versions]
     return max(ends)
+
+
+def cumulative_steps_at(versions: list, upto_index: int) -> int:
+    """Real cumulative steps done by the end of versions[upto_index].
+    Counts each distinct step-range once, using its latest value."""
+    best_per_range: dict = {}
+
+    for i in range(upto_index + 1):
+        v = versions[i]
+        if v["status"] != "shipped":
+            continue
+        best_per_range[v["steps"]] = v["steps_covered"]
+
+    return sum(best_per_range.values())
