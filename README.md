@@ -6,7 +6,7 @@
 > hand-written graph engine, and a 0/1 knapsack response planner.
 > 73/73 DSA + SQL steps, 46 tests, 8 real decision records.
 
-![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Python](https://img.shields.io/badge/Python-3.14-blue)
 ![SQLite](https://img.shields.io/badge/SQLite-3--table%20schema-003B57)
 ![Flask](https://img.shields.io/badge/Flask-REST%20API-black)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
